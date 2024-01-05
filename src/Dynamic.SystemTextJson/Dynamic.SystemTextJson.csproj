@@ -8,6 +8,7 @@
   
   <ItemGroup>
     <Using Include="System.Text.Json" />
+    <Using Include="System.Dynamic" />
   </ItemGroup>
 
 </Project>
