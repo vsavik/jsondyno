@@ -1,6 +1,6 @@
 namespace Dynamic.SystemTextJson.Document;
 
-internal abstract class DocumentProxy : DynamicObject
+internal abstract partial class DocumentProxy : DynamicObject
 {
     private readonly JsonElement _element;
 
@@ -23,34 +23,7 @@ internal abstract class DocumentProxy : DynamicObject
         return true;
     }
 
-    protected DocumentProxy? Create(in JsonElement element) =>
-        Create(in element, Options);
+    public T As<T>() => (T)(dynamic)this;
 
-    public static DocumentProxy? Create(in JsonElement element, JsonSerializerOptions options)
-    {
-        switch (element.ValueKind)
-        {
-            case JsonValueKind.True:
-            case JsonValueKind.False:
-            case JsonValueKind.String:
-            case JsonValueKind.Number:
-                return new ValueProxy(in element, options);
-
-            case JsonValueKind.Array:
-                return new ArrayProxy(in element, options);
-
-            case JsonValueKind.Object:
-                return new ObjectProxy(in element, options);
-
-            case JsonValueKind.Null:
-                return null;
-
-            case JsonValueKind.Undefined:
-            default:
-                throw new InvalidOperationException(
-                    $"Cannot create proxy object for value kind {element.ValueKind}.");
-        }
-    }
-
-    public static implicit operator JsonElement(DocumentProxy wrapper) => wrapper.Element;
+    public T To<T>() => Element.Deserialize<T>(Options)!;
 }

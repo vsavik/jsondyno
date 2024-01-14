@@ -11,6 +11,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{4E74
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleSample", "samples\ConsoleSample\ConsoleSample.csproj", "{7D5E4B50-1B54-4571-85A4-58FECFF28253}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{BD1F95F0-9274-44BC-A4DE-423FB6C07FC7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dynamic.SystemTextJson.Tests", "tests\Dynamic.SystemTextJson.Tests\Dynamic.SystemTextJson.Tests.csproj", "{53A363BF-08C1-47D8-A74B-617F4FD48C40}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,9 +32,14 @@ Global
 		{7D5E4B50-1B54-4571-85A4-58FECFF28253}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D5E4B50-1B54-4571-85A4-58FECFF28253}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D5E4B50-1B54-4571-85A4-58FECFF28253}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53A363BF-08C1-47D8-A74B-617F4FD48C40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53A363BF-08C1-47D8-A74B-617F4FD48C40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53A363BF-08C1-47D8-A74B-617F4FD48C40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53A363BF-08C1-47D8-A74B-617F4FD48C40}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{188EDA33-9692-4609-8574-F13E081FFB4F} = {121F456E-61FC-4BDF-B712-623ADF96EC33}
 		{7D5E4B50-1B54-4571-85A4-58FECFF28253} = {4E74772A-F7DB-48CB-AF70-82807B482F4C}
+		{53A363BF-08C1-47D8-A74B-617F4FD48C40} = {BD1F95F0-9274-44BC-A4DE-423FB6C07FC7}
 	EndGlobalSection
 EndGlobal

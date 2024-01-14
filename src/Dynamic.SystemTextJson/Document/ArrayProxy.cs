@@ -1,6 +1,8 @@
+using System.Collections.ObjectModel;
+
 namespace Dynamic.SystemTextJson.Document;
 
-internal sealed class ArrayProxy : DocumentProxy
+internal sealed partial class ArrayProxy : DocumentProxy
 {
     private readonly List<object?> _data;
 
@@ -9,19 +11,42 @@ internal sealed class ArrayProxy : DocumentProxy
     {
         Length = Element.GetArrayLength();
         _data = new List<object?>(Length);
-        
+
         foreach (JsonElement item in Element.EnumerateArray())
         {
-            // TODO: initialize data
+            DocumentProxy? itemProxy = item.CreateProxy(Options);
+            _data.Add(itemProxy);
         }
     }
 
     public int Length { get; }
 
-    public object? this[int index]
+    public List<object?>.Enumerator GetEnumerator() => _data.GetEnumerator();
+
+    public override bool TryConvert(ConvertBinder binder, out object? result)
     {
-        get => _data[index];
-        set => throw new NotSupportedException(
-            "Dynamic object based on JsonElement is read-only.");
+        bool isConverted = true;
+        if (binder.ReturnType == typeof(object[]))
+        {
+            result = _data.ToArray();
+        }
+        else if (binder.ReturnType == typeof(List<object>))
+        {
+            result = _data;
+        }
+        else if (binder.ReturnType == typeof(Collection<object>))
+        {
+            result = new Collection<object?>(_data);
+        }
+        else if (binder.ReturnType == typeof(ReadOnlyCollection<object>))
+        {
+            result = new ReadOnlyCollection<object?>(_data);
+        }
+        else
+        {
+            isConverted = base.TryConvert(binder, out result);
+        }
+
+        return isConverted;
     }
 }

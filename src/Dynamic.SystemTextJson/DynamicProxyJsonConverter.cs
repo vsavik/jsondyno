@@ -1,10 +1,9 @@
 using System.Diagnostics;
-using System.Text.Json.Serialization;
-using System.Text.Json.Nodes;
+using Dynamic.SystemTextJson.Document;
 
 namespace Dynamic.SystemTextJson;
 
-internal sealed class DynamicProxyJsonConverter : JsonConverter<dynamic>
+public sealed class DynamicProxyJsonConverter : JsonConverter<dynamic>
 {
     public override bool CanConvert(Type typeToConvert)
     {
@@ -24,11 +23,7 @@ internal sealed class DynamicProxyJsonConverter : JsonConverter<dynamic>
             using JsonDocument document = JsonDocument.ParseValue(ref reader);
             JsonElement element = document.RootElement.Clone();
 
-            return JsonElementDynamicWrapper.Create(element, options)!;
-
-            // the code below is better but it works correctly only from .NET 8
-            // because JsonElement.ParseValue contains root JsonDocument that should be disposed
-            // var element = JsonElement.ParseValue(ref reader);
+            return element.CreateProxy(options)!;
         }
 
         Debug.Assert(options.UnknownTypeHandling == JsonUnknownTypeHandling.JsonNode);

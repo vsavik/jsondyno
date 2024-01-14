@@ -24,9 +24,6 @@ public static class ConverterExtensions
     // MaybeNull input, allow return null
     public static TOut As<TOut>(dynamic src, TOut defaultValue)
     {
-        dynamic x = new Object();
-        dynamic data = x.Data;
-
         if (src is IConverterProxy proxy)
         {
             return proxy.As<TOut>();
@@ -70,4 +67,30 @@ public interface IValueProxy<in T>
     static abstract implicit operator DateTimeOffset?(T proxy);
 
     static abstract implicit operator byte[]?(T proxy);
+}
+
+public interface IStringProxy<in T>
+    where T : IStringProxy<T>
+{
+    static abstract implicit operator string?(T proxy);
+}
+
+
+
+namespace Dyno.Value
+{
+    public class A
+    {
+
+    }
+
+}
+
+namespace Dyno.Value.Child
+{
+    public class B
+    {
+        A a = new A();
+
+    }
 }

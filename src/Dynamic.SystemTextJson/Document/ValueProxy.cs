@@ -1,8 +1,8 @@
 namespace Dynamic.SystemTextJson.Document;
 
-internal sealed class ValueProxy : DocumentProxy
+internal sealed partial class ValueProxy : DocumentProxy
 {
-    private delegate T LoadValue<out T>(in JsonElement element);
+    private delegate T LoadValueDelegate<out T>(in JsonElement element);
 
     private object? _cachedValue;
 
@@ -11,7 +11,7 @@ internal sealed class ValueProxy : DocumentProxy
     {
     }
 
-    private T GetValue<T>(LoadValue<T> loadFunc)
+    private T GetValue<T>(LoadValueDelegate<T> loadFunc)
     {
         if (_cachedValue is not null && _cachedValue is T value)
         {
@@ -22,14 +22,5 @@ internal sealed class ValueProxy : DocumentProxy
         _cachedValue = value;
 
         return value;
-    }
-
-    public static implicit operator string?(ValueProxy proxy) =>
-        proxy.GetValue(Functions.LoadString);
-
-    private static class Functions
-    {
-        public static LoadValue<string?> LoadString { get; } =
-            static (in JsonElement element) => element.GetString();
     }
 }
