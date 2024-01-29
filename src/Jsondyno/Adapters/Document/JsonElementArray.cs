@@ -14,9 +14,7 @@ internal sealed partial class JsonElementArray : JsonElementValue<IArray>, IRead
         for (int i = 0; i < _data.Length && enumerator.MoveNext(); i++)
         {
             JsonElement arrayElement = enumerator.Current;
-
-            // TODO: use factory to create item
-            _data[i] = (object)arrayElement;
+            _data[i] = arrayElement.CreateAdapter(Options);
         }
     }
 
