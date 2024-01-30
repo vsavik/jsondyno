@@ -7,5 +7,6 @@ internal sealed class ArrayAdapter : ValueAdapter<IArray>
     {
     }
 
-    public static implicit operator List<object?>(ArrayAdapter adapter) => adapter.Value.ToList();
+    public static implicit operator List<object?>?(ArrayAdapter adapter) =>
+        adapter.Value.ConvertUsing(static x => x.AsList());
 }

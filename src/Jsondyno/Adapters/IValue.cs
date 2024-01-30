@@ -8,7 +8,9 @@ internal interface IValue
 internal interface IValue<out TValue>
     where TValue : IValue<TValue>
 {
-    TResult? ConvertTo<TResult>(Converter<TValue, TResult> converter);
+    TResult? ConvertUsing<TResult>(ValueConverter<TValue, TResult> converter)
+        where TResult : notnull;
 }
 
-internal delegate TResult Converter<in TValue, out TResult>(TValue adapter);
+internal delegate TResult ValueConverter<in TValue, out TResult>(TValue value)
+    where TResult : notnull;

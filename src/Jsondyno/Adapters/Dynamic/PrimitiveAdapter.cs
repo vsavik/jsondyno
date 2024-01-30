@@ -8,5 +8,5 @@ internal sealed class PrimitiveAdapter : ValueAdapter<IPrimitive>
     }
 
     public static implicit operator string?(PrimitiveAdapter adapter) =>
-        adapter.Value.ConvertTo(static x => x.GetString());
+        adapter.Value.ConvertUsing(static x => x.AsString());
 }

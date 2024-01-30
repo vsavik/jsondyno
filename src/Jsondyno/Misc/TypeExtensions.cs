@@ -1,12 +1,12 @@
 namespace Jsondyno.Misc;
 
-internal static class Extensions
+internal static class TypeExtensions
 {
-    public static bool HasCustomConverterFor(this JsonSerializerOptions options, Type type)
+    public static bool HasCustomConverter(this Type type, JsonSerializerOptions options)
     {
         IList<JsonConverter> converters = options.Converters;
 
-        if (converters is [DynamicJsonConverter] or [])
+        if (converters is [DynamicObjectJsonConverter] or [])
         {
             return false;
         }
@@ -15,18 +15,18 @@ internal static class Extensions
         Type? underlyingType = Nullable.GetUnderlyingType(type);
         if (underlyingType is not null)
         {
-            result = converters.HasCustomConverterFor(underlyingType);
+            result = underlyingType.HasCustomConverter(converters);
         }
 
         if (!result)
         {
-            result = converters.HasCustomConverterFor(type);
+            result = type.HasCustomConverter(converters);
         }
 
         return result;
     }
 
-    private static bool HasCustomConverterFor(this IList<JsonConverter> converters, Type type)
+    private static bool HasCustomConverter(this Type type, IList<JsonConverter> converters)
     {
         // This is to avoid GetEnumerator memory allocation.
         // ReSharper disable once ForCanBeConvertedToForeach
@@ -61,6 +61,6 @@ internal static class Extensions
         return underlyingTargetType is not null && sourceType == underlyingTargetType;
     }
 
-    public static bool IsCompatibleInterfaceTo(this Type targetType, Type sourceType) =>
-        targetType.IsInterface && sourceType.IsAssignableTo(targetType);
+    public static bool IsCompatibleInterfaceTo(this Type interfaceType, Type interfaceImplementorType) =>
+        interfaceType.IsInterface && interfaceImplementorType.IsAssignableTo(interfaceType);
 }

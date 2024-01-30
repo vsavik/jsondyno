@@ -28,7 +28,7 @@ internal abstract class JsonElementValue<TValue> : IValue, IValue<TValue>
         }
 
         // In case when custom converter exists, prefer it GetXxx methods
-        if (Options.HasCustomConverterFor(targetType))
+        if (targetType.HasCustomConverter(Options))
         {
             return _cache.SetValue(_element.Deserialize(targetType, Options));
         }
@@ -43,7 +43,8 @@ internal abstract class JsonElementValue<TValue> : IValue, IValue<TValue>
         return _cache.SetValue(_element.Deserialize(targetType, Options));
     }
 
-    public TResult? ConvertTo<TResult>(Converter<TValue, TResult> converter)
+    public TResult? ConvertUsing<TResult>(ValueConverter<TValue, TResult> converter)
+        where TResult : notnull
     {
         Type targetType = typeof(TResult);
 
@@ -54,7 +55,7 @@ internal abstract class JsonElementValue<TValue> : IValue, IValue<TValue>
         }
 
         // In case when custom converter exists, prefer it GetXxx methods
-        if (Options.HasCustomConverterFor(targetType))
+        if (targetType.HasCustomConverter(Options))
         {
             return _cache.SetValue(_element.Deserialize<TResult>(Options));
         }
