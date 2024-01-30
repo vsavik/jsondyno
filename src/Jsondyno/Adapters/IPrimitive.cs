@@ -2,40 +2,37 @@ namespace Jsondyno.Adapters;
 
 internal interface IPrimitive : IValue, IValue<IPrimitive>
 {
-    /*
-
     bool GetBoolean();
 
-    GetByte()
+    byte GetByte();
 
-    GetInt16()
+    short GetInt16();
 
-    GetInt32()
+    int GetInt32();
 
-    GetInt64()
+    long GetInt64();
 
-    GetSByte()
+    sbyte GetSByte();
 
-    GetUInt16()
+    ushort GetUInt16();
 
-    GetUInt32()
+    uint GetUInt32();
 
-    GetUInt64()
+    ulong GetUInt64();
 
-    GetSingle()
+    float GetSingle();
 
-    GetDouble()
+    double GetDouble();
 
-    GetDecimal()*/
+    decimal GetDecimal();
 
     string GetString();
 
-    /*
     Guid GetGuid();
 
     DateTime GetDateTime();
 
     DateTimeOffset GetDateTimeOffset();
 
-    byte[] GetBytesFromBase64();*/
+    byte[] GetBytesFromBase64();
 }
