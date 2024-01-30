@@ -15,11 +15,7 @@ public sealed class PrimitiveAdapterTest
     {
         _adapter = new PrimitiveAdapter(_fixture.Mock.Object);
         int seed = Random.Shared.Next();
-        _faker = new Faker
-        {
-            Random = new Randomizer(seed)
-        };
-        
+        _faker = new Faker { Random = new Randomizer(seed) };
         output.WriteLine($"Using seed: {seed}");
     }
 
@@ -32,15 +28,9 @@ public sealed class PrimitiveAdapterTest
 
         // Act
         string actual = _adapter;
-        int sd = _adapter;
 
         // Assert
         _fixture.Verify(x => x.AsString());
-        Assert.Equal(expected, actual);
-    }
-
-    [Fact]
-    public void Test1()
-    {
+        actual.ShouldBe(expected);
     }
 }
