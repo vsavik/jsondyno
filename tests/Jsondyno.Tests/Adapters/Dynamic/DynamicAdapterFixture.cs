@@ -24,7 +24,7 @@ internal sealed class DynamicAdapterFixture<TMock>
         return this;
     }
 
-    public void Verify<TValue>(Expression<Func<TMock, TValue>> expression)
+    public DynamicAdapterFixture<TMock> VerifyCast<TValue>(Expression<Func<TMock, TValue>> expression)
         where TValue : notnull
     {
         Mock.Verify(
@@ -38,5 +38,26 @@ internal sealed class DynamicAdapterFixture<TMock>
             $"{nameof(IValue<TMock>.ConvertUsing)} shoud not be called only once.");
 
         Mock.Verify(expression, Times.Once(), "Data action should be called only once.");
+
+        return this;
+    }
+
+    public DynamicAdapterFixture<TMock> SetupConvert<TValue>(
+        TValue value)
+    {
+        Mock.Setup(x => x.ConvertTo(It.Is<Type>(type => type == typeof(TValue))))
+            .Returns(value);
+
+        return this;
+    }
+
+    public DynamicAdapterFixture<TMock> VerifyConvert()
+    {
+        Mock.Verify(
+            x => x.ConvertTo(It.IsAny<Type>()),
+            Times.Once(),
+            $"{nameof(IValue.ConvertTo)} shoud be called only once.");
+
+        return this;
     }
 }

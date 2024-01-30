@@ -32,7 +32,7 @@ public sealed class PrimitiveAdapterTest
         bool actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetBoolean());
+        _fixture.VerifyCast(x => x.GetBoolean());
         actual.ShouldBe(expected);
     }
 
@@ -47,7 +47,7 @@ public sealed class PrimitiveAdapterTest
         bool? actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetBoolean());
+        _fixture.VerifyCast(x => x.GetBoolean());
         actual.ShouldNotBeNull();
         actual.ShouldBe(expected);
     }
@@ -63,7 +63,7 @@ public sealed class PrimitiveAdapterTest
         byte actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetByte());
+        _fixture.VerifyCast(x => x.GetByte());
         actual.ShouldBe(expected);
     }
 
@@ -78,7 +78,7 @@ public sealed class PrimitiveAdapterTest
         byte? actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetByte());
+        _fixture.VerifyCast(x => x.GetByte());
         actual.ShouldNotBeNull();
         actual.ShouldBe(expected);
     }
@@ -94,7 +94,7 @@ public sealed class PrimitiveAdapterTest
         short actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetInt16());
+        _fixture.VerifyCast(x => x.GetInt16());
         actual.ShouldBe(expected);
     }
 
@@ -109,7 +109,7 @@ public sealed class PrimitiveAdapterTest
         short? actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetInt16());
+        _fixture.VerifyCast(x => x.GetInt16());
         actual.ShouldNotBeNull();
         actual.ShouldBe(expected);
     }
@@ -125,7 +125,7 @@ public sealed class PrimitiveAdapterTest
         int actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetInt32());
+        _fixture.VerifyCast(x => x.GetInt32());
         actual.ShouldBe(expected);
     }
 
@@ -140,7 +140,7 @@ public sealed class PrimitiveAdapterTest
         int? actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetInt32());
+        _fixture.VerifyCast(x => x.GetInt32());
         actual.ShouldNotBeNull();
         actual.ShouldBe(expected);
     }
@@ -156,7 +156,7 @@ public sealed class PrimitiveAdapterTest
         long actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetInt64());
+        _fixture.VerifyCast(x => x.GetInt64());
         actual.ShouldBe(expected);
     }
 
@@ -171,7 +171,7 @@ public sealed class PrimitiveAdapterTest
         long? actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetInt64());
+        _fixture.VerifyCast(x => x.GetInt64());
         actual.ShouldNotBeNull();
         actual.ShouldBe(expected);
     }
@@ -187,7 +187,7 @@ public sealed class PrimitiveAdapterTest
         sbyte actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetSByte());
+        _fixture.VerifyCast(x => x.GetSByte());
         actual.ShouldBe(expected);
     }
 
@@ -202,7 +202,7 @@ public sealed class PrimitiveAdapterTest
         sbyte? actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetSByte());
+        _fixture.VerifyCast(x => x.GetSByte());
         actual.ShouldNotBeNull();
         actual.ShouldBe(expected);
     }
@@ -218,7 +218,7 @@ public sealed class PrimitiveAdapterTest
         ushort actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetUInt16());
+        _fixture.VerifyCast(x => x.GetUInt16());
         actual.ShouldBe(expected);
     }
 
@@ -233,7 +233,7 @@ public sealed class PrimitiveAdapterTest
         ushort? actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetUInt16());
+        _fixture.VerifyCast(x => x.GetUInt16());
         actual.ShouldNotBeNull();
         actual.ShouldBe(expected);
     }
@@ -249,7 +249,7 @@ public sealed class PrimitiveAdapterTest
         uint actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetUInt32());
+        _fixture.VerifyCast(x => x.GetUInt32());
         actual.ShouldBe(expected);
     }
 
@@ -264,7 +264,7 @@ public sealed class PrimitiveAdapterTest
         uint? actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetUInt32());
+        _fixture.VerifyCast(x => x.GetUInt32());
         actual.ShouldNotBeNull();
         actual.ShouldBe(expected);
     }
@@ -280,7 +280,7 @@ public sealed class PrimitiveAdapterTest
         ulong actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetUInt64());
+        _fixture.VerifyCast(x => x.GetUInt64());
         actual.ShouldBe(expected);
     }
 
@@ -295,7 +295,7 @@ public sealed class PrimitiveAdapterTest
         ulong? actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetUInt64());
+        _fixture.VerifyCast(x => x.GetUInt64());
         actual.ShouldNotBeNull();
         actual.ShouldBe(expected);
     }
@@ -311,7 +311,7 @@ public sealed class PrimitiveAdapterTest
         float actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetSingle());
+        _fixture.VerifyCast(x => x.GetSingle());
         actual.ShouldBe(expected);
     }
 
@@ -326,7 +326,7 @@ public sealed class PrimitiveAdapterTest
         float? actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetSingle());
+        _fixture.VerifyCast(x => x.GetSingle());
         actual.ShouldNotBeNull();
         actual.ShouldBe(expected);
     }
@@ -342,7 +342,7 @@ public sealed class PrimitiveAdapterTest
         double actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetDouble());
+        _fixture.VerifyCast(x => x.GetDouble());
         actual.ShouldBe(expected);
     }
 
@@ -357,7 +357,7 @@ public sealed class PrimitiveAdapterTest
         double? actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetDouble());
+        _fixture.VerifyCast(x => x.GetDouble());
         actual.ShouldNotBeNull();
         actual.ShouldBe(expected);
     }
@@ -373,7 +373,7 @@ public sealed class PrimitiveAdapterTest
         decimal actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetDecimal());
+        _fixture.VerifyCast(x => x.GetDecimal());
         actual.ShouldBe(expected);
     }
 
@@ -388,7 +388,7 @@ public sealed class PrimitiveAdapterTest
         decimal? actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetDecimal());
+        _fixture.VerifyCast(x => x.GetDecimal());
         actual.ShouldNotBeNull();
         actual.ShouldBe(expected);
     }
@@ -404,7 +404,7 @@ public sealed class PrimitiveAdapterTest
         string actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetString());
+        _fixture.VerifyCast(x => x.GetString());
         actual.ShouldBe(expected);
     }
 
@@ -420,7 +420,7 @@ public sealed class PrimitiveAdapterTest
         Guid actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetGuid());
+        _fixture.VerifyCast(x => x.GetGuid());
         actual.ShouldBe(expected);
     }
 
@@ -435,7 +435,7 @@ public sealed class PrimitiveAdapterTest
         Guid? actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetGuid());
+        _fixture.VerifyCast(x => x.GetGuid());
         actual.ShouldNotBeNull();
         actual.ShouldBe(expected);
     }
@@ -451,7 +451,7 @@ public sealed class PrimitiveAdapterTest
         DateTime actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetDateTime());
+        _fixture.VerifyCast(x => x.GetDateTime());
         actual.ShouldBe(expected);
     }
 
@@ -466,7 +466,7 @@ public sealed class PrimitiveAdapterTest
         DateTime? actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetDateTime());
+        _fixture.VerifyCast(x => x.GetDateTime());
         actual.ShouldNotBeNull();
         actual.ShouldBe(expected);
     }
@@ -482,7 +482,7 @@ public sealed class PrimitiveAdapterTest
         DateTimeOffset actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetDateTimeOffset());
+        _fixture.VerifyCast(x => x.GetDateTimeOffset());
         actual.ShouldBe(expected);
     }
 
@@ -497,7 +497,7 @@ public sealed class PrimitiveAdapterTest
         DateTimeOffset? actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetDateTimeOffset());
+        _fixture.VerifyCast(x => x.GetDateTimeOffset());
         actual.ShouldNotBeNull();
         actual.ShouldBe(expected);
     }
@@ -513,7 +513,46 @@ public sealed class PrimitiveAdapterTest
         byte[] actual = _adapter;
 
         // Assert
-        _fixture.Verify(x => x.GetBytesFromBase64());
+        _fixture.VerifyCast(x => x.GetBytesFromBase64());
         actual.ShouldBe(expected);
+    }
+
+    [Fact]
+    public void ConvertToEnum()
+    {
+        // Arrange
+        SampleEnum expected = _faker.Random.Enum<SampleEnum>();
+        _fixture.SetupConvert(expected);
+
+        // Act
+        SampleEnum actual = _adapter;
+
+        // Assert
+        _fixture.VerifyConvert();
+        actual.ShouldBe(expected);
+    }
+
+    [Fact]
+    public void ConvertToNullableEnum()
+    {
+        // Arrange
+        SampleEnum? expected = _faker.Random.Enum<SampleEnum>();
+        _fixture.SetupConvert(expected);
+
+        // Act
+        SampleEnum? actual = _adapter;
+
+        // Assert
+        _fixture.VerifyConvert();
+        actual.ShouldNotBeNull();
+        actual.ShouldBe(expected);
+    }
+
+    private enum SampleEnum
+    {
+        None = 0,
+        Value1,
+        Value2,
+        Value3
     }
 }
