@@ -2,40 +2,39 @@ namespace Jsondyno.Adapters.Document;
 
 partial class JsonElementPrimitive : IPrimitive
 {
-    // TODO: null check
-    //public string GetString() => Element.GetString()!;
+    public bool GetBoolean() => Element.GetBoolean();
 
-    public bool GetBoolean() => throw new NotImplementedException();
+    public byte GetByte() => Element.GetByte();
 
-    public byte GetByte() => throw new NotImplementedException();
+    public short GetInt16() => Element.GetInt16();
 
-    public short GetInt16() => throw new NotImplementedException();
+    public int GetInt32() => Element.GetInt32();
 
-    public int GetInt32() => throw new NotImplementedException();
+    public long GetInt64() => Element.GetInt64();
 
-    public long GetInt64() => throw new NotImplementedException();
+    public sbyte GetSByte() => Element.GetSByte();
 
-    public sbyte GetSByte() => throw new NotImplementedException();
+    public ushort GetUInt16() => Element.GetUInt16();
 
-    public ushort GetUInt16() => throw new NotImplementedException();
+    public uint GetUInt32() => Element.GetUInt32();
 
-    public uint GetUInt32() => throw new NotImplementedException();
+    public ulong GetUInt64() => Element.GetUInt64();
 
-    public ulong GetUInt64() => throw new NotImplementedException();
+    public float GetSingle() => Element.GetSingle();
 
-    public float GetSingle() => throw new NotImplementedException();
+    public double GetDouble() => Element.GetDouble();
 
-    public double GetDouble() => throw new NotImplementedException();
+    public decimal GetDecimal() => Element.GetDecimal();
 
-    public decimal GetDecimal() => throw new NotImplementedException();
+    public string GetString() => Element.GetString()
+        // Impossible exception because JsonElementPrimitive cannot wrap Json
+        ?? throw new InvalidOperationException(SR.NullStringData);
 
-    public string GetString() => throw new NotImplementedException();
+    public Guid GetGuid() => Element.GetGuid();
 
-    public Guid GetGuid() => throw new NotImplementedException();
+    public DateTime GetDateTime() => Element.GetDateTime();
 
-    public DateTime GetDateTime() => throw new NotImplementedException();
+    public DateTimeOffset GetDateTimeOffset() => Element.GetDateTimeOffset();
 
-    public DateTimeOffset GetDateTimeOffset() => throw new NotImplementedException();
-
-    public byte[] GetBytesFromBase64() => throw new NotImplementedException();
+    public byte[] GetBytesFromBase64() => Element.GetBytesFromBase64();
 }
