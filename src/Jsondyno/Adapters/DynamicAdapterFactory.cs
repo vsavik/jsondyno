@@ -29,8 +29,7 @@ internal static class DynamicAdapterFactory
 
             case JsonValueKind.Undefined:
             default:
-                throw new InvalidOperationException(
-                    $"Cannot create proxy object for value kind {element.ValueKind}.");
+                throw new InvalidOperationException(SR.CannotCreateDynamicAdapter(element.ValueKind));
         }
     }
 }
