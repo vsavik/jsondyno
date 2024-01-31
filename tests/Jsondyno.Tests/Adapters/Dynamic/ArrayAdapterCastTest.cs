@@ -11,12 +11,9 @@ public sealed class ArrayAdapterCastTest
 
     private readonly dynamic _adapter;
 
-    private readonly Faker _faker;
-
-    public ArrayAdapterCastTest(ITestOutputHelper output)
+    public ArrayAdapterCastTest()
     {
         _adapter = new ArrayAdapter(_mock.Object);
-        _faker = Factory.CreateFaker(output);
     }
 
     [Fact]

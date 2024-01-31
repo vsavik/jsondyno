@@ -6,7 +6,9 @@ internal interface IObject : IValue, IValue<IObject>
 {
     int Count { get; }
 
-    object? this[string key] { get; }
+    object? GetByKey(string key);
+
+    object? GetByRawKey(string key);
 
     Dictionary<string, object?> GetDictionary();
 

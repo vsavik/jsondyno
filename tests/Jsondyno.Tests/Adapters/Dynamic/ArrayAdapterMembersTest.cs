@@ -8,7 +8,7 @@ public sealed class ArrayAdapterMembersTest
 {
     private const int MaxDataSize = 1024;
 
-    private readonly DynamicArrayFixture _fixture;
+    private readonly Fixture _fixture;
 
     private readonly dynamic _adapter;
 
@@ -17,7 +17,7 @@ public sealed class ArrayAdapterMembersTest
     public ArrayAdapterMembersTest(ITestOutputHelper output)
     {
         _faker = Factory.CreateFaker(output);
-        _fixture = DynamicArrayFixture.Create(this);
+        _fixture = Fixture.Create(this);
         _adapter = new ArrayAdapter(_fixture.Mock.Object);
     }
 
@@ -57,9 +57,9 @@ public sealed class ArrayAdapterMembersTest
         }
     }
 
-    private sealed class DynamicArrayFixture
+    private sealed class Fixture
     {
-        private DynamicArrayFixture(IReadOnlyList<object> data)
+        private Fixture(IReadOnlyList<object> data)
         {
             Data = data;
         }
@@ -68,11 +68,11 @@ public sealed class ArrayAdapterMembersTest
 
         public IReadOnlyList<object> Data { get; }
 
-        public static DynamicArrayFixture Create(ArrayAdapterMembersTest testContainer)
+        public static Fixture Create(ArrayAdapterMembersTest testContainer)
         {
             int size = testContainer._faker.Random.Int(1, MaxDataSize);
             string[] data = testContainer._faker.Lorem.Words(size);
-            DynamicArrayFixture fixture = new(data);
+            Fixture fixture = new(data);
 
             fixture.Mock.SetupGet(x => x.Length).Returns(size);
             fixture.Mock.SetupGet(x => x.Count).Returns(size);

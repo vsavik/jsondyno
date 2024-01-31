@@ -14,7 +14,7 @@ var opts = new JsonSerializerOptions(JsonSerializerDefaults.General)
     ReadCommentHandling = JsonCommentHandling.Skip,
     UnknownTypeHandling = JsonUnknownTypeHandling.JsonElement,
     WriteIndented = true,
-    Converters = { new CustomStructConverter() },
+    Converters = { new DynamConverter() },
 };
 
 string json = """
@@ -34,9 +34,12 @@ string objectJson = """
                     """;
 
 
-//int x = JsonSerializer.Deserialize<int>(nulljson, opts);
+dynamic? x = JsonSerializer.Deserialize<dynamic>(json, opts);
 
-//Console.WriteLine(x);
+Console.WriteLine(x is null);
+object? o = x;
+Console.WriteLine(o?.GetType());
+Console.WriteLine(o?.ToString());
 
 /*
 JsonConverter c = opts.GetConverter(typeof(Sa));
@@ -56,11 +59,6 @@ var jo = new JsonObject(options)
 
 //Console.WriteLine(jo["Obj"]!.);
 
-dynamic dd = new SampleDynamic();
-
-List<int> a = dd;
-
-Console.WriteLine(a[0]);
 
 
 public class Sa : IEnumerable<string>
@@ -120,4 +118,15 @@ public sealed class SampleDynamic : DynamicObject
 
         return true;
     }
+}
+
+public sealed class DynamConverter : JsonConverter<dynamic?>
+{
+    public override dynamic? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        Console.WriteLine($"i'm inside DynamConverter {typeToConvert}");
+        return JsonSerializer.Deserialize<JsonElement>(ref reader, options);
+    }
+
+    public override void Write(Utf8JsonWriter writer, dynamic? value, JsonSerializerOptions options) => throw new NotImplementedException();
 }
