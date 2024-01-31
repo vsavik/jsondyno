@@ -27,7 +27,7 @@ partial class JsonElementPrimitive : IPrimitive
     public decimal GetDecimal() => Element.GetDecimal();
 
     public string GetString() => Element.GetString()
-        // Impossible exception because JsonElementPrimitive cannot wrap Json
+        // Impossible exception because JsonElementPrimitive cannot wrap JsonValueKind.Null
         ?? throw new InvalidOperationException(SR.NullStringData);
 
     public Guid GetGuid() => Element.GetGuid();
