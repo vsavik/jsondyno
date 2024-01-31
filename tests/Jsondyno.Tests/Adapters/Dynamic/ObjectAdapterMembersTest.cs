@@ -1,3 +1,4 @@
+using System.Collections;
 using Jsondyno.Adapters;
 using Jsondyno.Adapters.Dynamic;
 
@@ -24,36 +25,46 @@ public sealed class ObjectAdapterMembersTest
     public void CanGetCount()
     {
         int actual = _adapter.Count;
-        //actual.ShouldBe(_fixture.Data.Count);
-        throw new NotImplementedException();
+        actual.ShouldBe(_fixture.Data.Count);
     }
 
     [Fact]
     public void CanGetItemByKey()
     {
-        //int actual = _adapter.Count;
-        //actual.ShouldBe(_fixture.Data.Count);
-        throw new NotImplementedException();
+        (string key, object expected) = _faker.Random.CollectionItem(_fixture.Data);
+        string actual = _adapter[key];
+        actual.ShouldBe(expected);
     }
 
     [Fact]
     public void CanGetItemByProperty()
     {
-        //int actual = _adapter.Count;
-        //actual.ShouldBe(_fixture.Data.Count);
-        throw new NotImplementedException();
+        object expected = _faker.Lorem.Sentence();
+        _fixture.Data["SampleProperty"] = expected;
+        string actual = _adapter.SampleProperty;
+        actual.ShouldBe(expected);
+    }
+
+    [Fact]
+    public void CanApplyForeach()
+    {
+        foreach (KeyValuePair<string, object?> item in _adapter)
+        {
+            _fixture.Data.TryGetValue(item.Key, out object? expected).ShouldBeTrue();
+            expected.ShouldBe(item.Value);
+        }
     }
 
     private sealed class Fixture
     {
-        private Fixture(IReadOnlyDictionary<string, object> data)
+        private Fixture(Dictionary<string, object> data)
         {
             Data = data;
         }
 
         public Mock<IObject> Mock { get; } = new(MockBehavior.Strict);
 
-        public IReadOnlyDictionary<string, object> Data { get; }
+        public Dictionary<string, object> Data { get; }
 
         public static Fixture Create(ObjectAdapterMembersTest testContainer)
         {
@@ -64,12 +75,16 @@ public sealed class ObjectAdapterMembersTest
                 string value = testContainer._faker.Random.String(minChar: 'a', maxChar: 'z');
                 data[key] = value;
             }
-            
-            Fixture result = new(data);
-            
-            //result.Mock.Setup()
-            
-            return result;
+
+            Fixture fixture = new(data);
+
+            fixture.Mock.SetupGet(x => x.Count).Returns(data.Count);
+            fixture.Mock.Setup(x => x.GetByKey(It.IsAny<string>())).Returns((string key) => data[key]);
+            fixture.Mock.Setup(x => x.GetByRawKey(It.IsAny<string>())).Returns((string key) => data[key]);
+            fixture.Mock.Setup(x => x.ConvertTo(It.Is<Type>(type => type == typeof(IEnumerable))))
+                .Returns(data);
+
+            return fixture;
         }
     }
 }
