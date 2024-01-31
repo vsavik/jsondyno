@@ -22,21 +22,21 @@ public sealed class ArrayAdapterMembersTest
     }
 
     [Fact]
-    public void GetLength()
-    {
-        int actual = _adapter.Length;
-        actual.ShouldBe(_fixture.Data.Count);
-    }
-
-    [Fact]
-    public void GetCount()
+    public void CanGetCount()
     {
         int actual = _adapter.Count;
         actual.ShouldBe(_fixture.Data.Count);
     }
 
     [Fact]
-    public void GetByIndex()
+    public void CanGetCountByLengthProperty()
+    {
+        int actual = _adapter.Length;
+        actual.ShouldBe(_fixture.Data.Count);
+    }
+
+    [Fact]
+    public void CanGetItemByIndex()
     {
         int index = _faker.Random.Int(0, _fixture.Data.Count - 1);
         object expected = _fixture.Data[index];
@@ -45,7 +45,7 @@ public sealed class ArrayAdapterMembersTest
     }
 
     [Fact]
-    public void EnumerateItems()
+    public void CanApplyForeach()
     {
         int index = 0;
         foreach (string actual in _adapter)
