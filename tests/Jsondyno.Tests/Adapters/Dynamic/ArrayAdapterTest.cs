@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.ObjectModel;
 using Jsondyno.Adapters;
 using Jsondyno.Adapters.Dynamic;
 
@@ -45,6 +46,21 @@ public sealed class ArrayAdapterTest
 
         // Assert
         _fixture.VerifyCast(x => x.GetList());
+        actual.ShouldBe(expected);
+    }
+
+    [Fact]
+    public void CastToCollection()
+    {
+        // Arrange
+        Collection<object?> expected = new();
+        _fixture.SetupCast(x => x.GetCollection(), expected);
+
+        // Act
+        Collection<object?> actual = _adapter;
+
+        // Assert
+        _fixture.VerifyCast(x => x.GetCollection());
         actual.ShouldBe(expected);
     }
 

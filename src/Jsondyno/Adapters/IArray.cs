@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.ObjectModel;
 
 namespace Jsondyno.Adapters;
 
@@ -13,6 +14,8 @@ internal interface IArray : IValue, IValue<IArray>
     object?[] GetArray();
 
     List<object?> GetList();
+
+    Collection<object?> GetCollection();
 
     ArrayList GetArrayList();
 

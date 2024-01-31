@@ -1,18 +1,19 @@
 using System.Collections;
+using System.Collections.ObjectModel;
 
 namespace Jsondyno.Adapters.Document;
 
 partial class JsonElementArray : IArray
 {
-    public List<object?> AsList() => throw new NotImplementedException();
-    
-    public object?[] GetArray() => throw new NotImplementedException();
+    public object?[] GetArray() => [.._data];
 
-    public List<object?> GetList() => throw new NotImplementedException();
+    public List<object?> GetList() => [.._data];
 
-    public ArrayList GetArrayList() => throw new NotImplementedException();
+    public Collection<object?> GetCollection() => [.._data];
 
-    public LinkedList<object?> GetLinkedList() => throw new NotImplementedException();
+    public ArrayList GetArrayList() => new(_data);
 
-    public HashSet<object?> GetHashSet() => throw new NotImplementedException();
+    public LinkedList<object?> GetLinkedList() => new(_data);
+
+    public HashSet<object?> GetHashSet() => [.._data];
 }

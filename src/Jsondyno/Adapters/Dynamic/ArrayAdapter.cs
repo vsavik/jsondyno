@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.ObjectModel;
 
 namespace Jsondyno.Adapters.Dynamic;
 
@@ -20,6 +21,9 @@ internal sealed class ArrayAdapter : ValueAdapter<IArray>
 
     public static implicit operator List<object?>?(ArrayAdapter adapter) =>
         adapter.Value.ConvertUsing(static x => x.GetList());
+
+    public static implicit operator Collection<object?>?(ArrayAdapter adapter) =>
+        adapter.Value.ConvertUsing(static x => x.GetCollection());
 
     public static implicit operator ArrayList?(ArrayAdapter adapter) =>
         adapter.Value.ConvertUsing(static x => x.GetArrayList());
