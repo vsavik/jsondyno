@@ -5,17 +5,17 @@ using Jsondyno.Adapters.Dynamic;
 
 namespace Jsondyno.Tests.Adapters.Dynamic;
 
-public sealed class ArrayAdapterTest
+public sealed class ArrayAdapterCastTest
 {
-    private readonly DynamicAdapterFixture<IArray> _fixture = new();
+    private readonly Mock<IArray> _mock = new(MockBehavior.Strict);
 
     private readonly dynamic _adapter;
 
     private readonly Faker _faker;
 
-    public ArrayAdapterTest(ITestOutputHelper output)
+    public ArrayAdapterCastTest(ITestOutputHelper output)
     {
-        _adapter = new ArrayAdapter(_fixture.Mock.Object);
+        _adapter = new ArrayAdapter(_mock.Object);
         _faker = Factory.CreateFaker(output);
     }
 
@@ -24,13 +24,13 @@ public sealed class ArrayAdapterTest
     {
         // Arrange
         object?[] expected = Array.Empty<object?>();
-        _fixture.SetupCast(x => x.GetArray(), expected);
+        _mock.JsondynoSetupTypecast(x => x.GetArray(), expected);
 
         // Act
         object?[] actual = _adapter;
 
         // Assert
-        _fixture.VerifyCast(x => x.GetArray());
+        _mock.JsondynoVerifyTypecast(x => x.GetArray());
         actual.ShouldBe(expected);
     }
 
@@ -39,13 +39,13 @@ public sealed class ArrayAdapterTest
     {
         // Arrange
         List<object?> expected = new(1);
-        _fixture.SetupCast(x => x.GetList(), expected);
+        _mock.JsondynoSetupTypecast(x => x.GetList(), expected);
 
         // Act
         List<object?> actual = _adapter;
 
         // Assert
-        _fixture.VerifyCast(x => x.GetList());
+        _mock.JsondynoVerifyTypecast(x => x.GetList());
         actual.ShouldBe(expected);
     }
 
@@ -54,13 +54,13 @@ public sealed class ArrayAdapterTest
     {
         // Arrange
         Collection<object?> expected = new();
-        _fixture.SetupCast(x => x.GetCollection(), expected);
+        _mock.JsondynoSetupTypecast(x => x.GetCollection(), expected);
 
         // Act
         Collection<object?> actual = _adapter;
 
         // Assert
-        _fixture.VerifyCast(x => x.GetCollection());
+        _mock.JsondynoVerifyTypecast(x => x.GetCollection());
         actual.ShouldBe(expected);
     }
 
@@ -69,13 +69,13 @@ public sealed class ArrayAdapterTest
     {
         // Arrange
         ArrayList expected = new(1);
-        _fixture.SetupCast(x => x.GetArrayList(), expected);
+        _mock.JsondynoSetupTypecast(x => x.GetArrayList(), expected);
 
         // Act
         ArrayList actual = _adapter;
 
         // Assert
-        _fixture.VerifyCast(x => x.GetArrayList());
+        _mock.JsondynoVerifyTypecast(x => x.GetArrayList());
         actual.ShouldBe(expected);
     }
 
@@ -84,13 +84,13 @@ public sealed class ArrayAdapterTest
     {
         // Arrange
         LinkedList<object?> expected = new();
-        _fixture.SetupCast(x => x.GetLinkedList(), expected);
+        _mock.JsondynoSetupTypecast(x => x.GetLinkedList(), expected);
 
         // Act
         LinkedList<object?> actual = _adapter;
 
         // Assert
-        _fixture.VerifyCast(x => x.GetLinkedList());
+        _mock.JsondynoVerifyTypecast(x => x.GetLinkedList());
         actual.ShouldBe(expected);
     }
 
@@ -99,13 +99,13 @@ public sealed class ArrayAdapterTest
     {
         // Arrange
         HashSet<object?> expected = new(1);
-        _fixture.SetupCast(x => x.GetHashSet(), expected);
+        _mock.JsondynoSetupTypecast(x => x.GetHashSet(), expected);
 
         // Act
         HashSet<object?> actual = _adapter;
 
         // Assert
-        _fixture.VerifyCast(x => x.GetHashSet());
+        _mock.JsondynoVerifyTypecast(x => x.GetHashSet());
         actual.ShouldBe(expected);
     }
 }

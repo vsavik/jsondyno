@@ -19,5 +19,4 @@ internal sealed partial class ObjectAdapter : ValueAdapter<IObject>
         //
         return base.TryGetMember(binder, out result);
     }
-
 }
