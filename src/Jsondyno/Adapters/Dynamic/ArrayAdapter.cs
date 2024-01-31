@@ -9,6 +9,12 @@ internal sealed class ArrayAdapter : ValueAdapter<IArray>
     {
     }
 
+    public int Length => Value.Length;
+
+    public int Count => Value.Count;
+
+    public object? this[int index] => Value[index];
+
     public static implicit operator object?[]?(ArrayAdapter adapter) =>
         adapter.Value.ConvertUsing(static x => x.GetArray());
 

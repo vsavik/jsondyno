@@ -2,8 +2,10 @@ namespace Jsondyno.Adapters.Document;
 
 partial class JsonElementArray : IList<object?>
 {
+    IEnumerator<object?> IEnumerable<object?>.GetEnumerator() => _data.AsEnumerable().GetEnumerator();
+
     int ICollection<object?>.Count => throw new NotImplementedException();
-    
+
     bool ICollection<object?>.IsReadOnly => throw new NotImplementedException();
 
     void ICollection<object?>.Add(object? item) => throw new NotImplementedException();
@@ -15,7 +17,7 @@ partial class JsonElementArray : IList<object?>
     void ICollection<object?>.CopyTo(object?[] array, int arrayIndex) => throw new NotImplementedException();
 
     bool ICollection<object?>.Remove(object? item) => throw new NotImplementedException();
-    
+
     object? IList<object?>.this[int index]
     {
         get => throw new NotImplementedException();

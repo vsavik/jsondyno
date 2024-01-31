@@ -16,9 +16,7 @@ public sealed class PrimitiveAdapterTest
     public PrimitiveAdapterTest(ITestOutputHelper output)
     {
         _adapter = new PrimitiveAdapter(_fixture.Mock.Object);
-        int seed = Random.Shared.Next();
-        _faker = new Faker { Random = new Randomizer(seed) };
-        output.WriteLine($"Using seed: {seed}");
+        _faker = Factory.CreateFaker(output);
     }
 
     [Fact]

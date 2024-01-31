@@ -1,6 +1,6 @@
 namespace Jsondyno.Adapters.Document;
 
-internal sealed partial class JsonElementArray : JsonElementValue<IArray>, IReadOnlyList<object?>
+internal sealed partial class JsonElementArray : JsonElementValue<IArray>
 {
     private readonly object?[] _data;
 
@@ -25,6 +25,4 @@ internal sealed partial class JsonElementArray : JsonElementValue<IArray>, IRead
     public int Count => Length;
 
     public object? this[int index] => _data[index];
-
-    public IEnumerator<object?> GetEnumerator() => _data.AsEnumerable().GetEnumerator();
 }

@@ -4,8 +4,8 @@ namespace Jsondyno.Adapters.Document;
 
 partial class JsonElementArray : IList
 {
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    
+    IEnumerator IEnumerable.GetEnumerator() => _data.GetEnumerator();
+
     int ICollection.Count => throw new NotImplementedException();
 
     bool ICollection.IsSynchronized => throw new NotImplementedException();
@@ -17,7 +17,7 @@ partial class JsonElementArray : IList
     bool IList.IsFixedSize => throw new NotImplementedException();
 
     bool IList.IsReadOnly => throw new NotImplementedException();
-    
+
     object? IList.this[int index]
     {
         get => throw new NotImplementedException();

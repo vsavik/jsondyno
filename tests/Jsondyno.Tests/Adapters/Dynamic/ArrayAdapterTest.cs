@@ -15,9 +15,7 @@ public sealed class ArrayAdapterTest
     public ArrayAdapterTest(ITestOutputHelper output)
     {
         _adapter = new ArrayAdapter(_fixture.Mock.Object);
-        int seed = Random.Shared.Next();
-        _faker = new Faker { Random = new Randomizer(seed) };
-        output.WriteLine($"Using seed: {seed}");
+        _faker = Factory.CreateFaker(output);
     }
 
     [Fact]
