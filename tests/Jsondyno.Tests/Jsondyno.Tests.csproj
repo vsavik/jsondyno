@@ -29,8 +29,4 @@
     <ProjectReference Include="..\..\src\Jsondyno\Jsondyno.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Adapters\" />
-  </ItemGroup>
-
 </Project>

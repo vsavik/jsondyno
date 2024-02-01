@@ -19,10 +19,4 @@ internal sealed partial class JsonElementArray : JsonElementValue<IArray>
     }
 
     protected override IArray Self => this;
-
-    public int Length { get; }
-
-    public int Count => Length;
-
-    public object? this[int index] => _data[index];
 }

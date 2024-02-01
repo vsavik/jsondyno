@@ -5,6 +5,10 @@ namespace Jsondyno.Adapters.Document;
 
 partial class JsonElementArray : IArray
 {
+    public int Length { get; }
+
+    public object? this[int index] => _data[index];
+    
     public object?[] GetArray() => [.._data];
 
     public List<object?> GetList() => [.._data];

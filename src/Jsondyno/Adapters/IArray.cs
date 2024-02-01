@@ -9,7 +9,7 @@ internal interface IArray : IValue, IValue<IArray>
 
     int Length { get; }
 
-    int Count { get; }
+    int Count => Length;
 
     object?[] GetArray();
 

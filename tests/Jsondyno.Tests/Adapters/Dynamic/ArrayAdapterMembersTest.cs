@@ -8,7 +8,7 @@ public sealed class ArrayAdapterMembersTest
 {
     private const int MaxDataSize = 1024;
 
-    private readonly Fixture _fixture;
+    private readonly ArrayFixture _fixture;
 
     private readonly dynamic _adapter;
 
@@ -17,29 +17,25 @@ public sealed class ArrayAdapterMembersTest
     public ArrayAdapterMembersTest(ITestOutputHelper output)
     {
         _faker = Factory.CreateFaker(output);
-        _fixture = Fixture.Create(this);
-        _adapter = new ArrayAdapter(_fixture.Mock.Object);
+        _fixture = ArrayFixture.Create(this);
+        _adapter = new ArrayAdapter(_fixture.Mock);
     }
 
     [Fact]
     public void CanGetCount()
     {
-        int actual = _adapter.Count;
-        actual.ShouldBe(_fixture.Data.Count);
-    }
+        int actualCount = _adapter.Count;
+        int actualLength = _adapter.Length;
 
-    [Fact]
-    public void CanGetCountByLengthProperty()
-    {
-        int actual = _adapter.Length;
-        actual.ShouldBe(_fixture.Data.Count);
+        actualCount.ShouldBe(_fixture.Length);
+        actualLength.ShouldBe(_fixture.Length);
     }
 
     [Fact]
     public void CanGetItemByIndex()
     {
-        int index = _faker.Random.Int(0, _fixture.Data.Count - 1);
-        object expected = _fixture.Data[index];
+        int index = _faker.Random.Int(0, _fixture.Length - 1);
+        object expected = _fixture[index];
         string actual = _adapter[index];
         actual.ShouldBe(expected);
     }
@@ -50,40 +46,49 @@ public sealed class ArrayAdapterMembersTest
         int index = 0;
         foreach (string actual in _adapter)
         {
-            object expected = _fixture.Data[index];
+            object expected = _fixture[index];
             actual.ShouldBe(expected);
 
             index++;
         }
     }
 
-    private sealed class Fixture
+    private sealed class ArrayFixture
     {
-        private Fixture(IReadOnlyList<object> data)
+        private readonly Mock<IArray> _mock = new(MockBehavior.Strict);
+
+        private readonly string[] _data;
+
+        private ArrayFixture(string[] data)
         {
-            Data = data;
+            _data = data;
+            SetupMock();
         }
 
-        public Mock<IArray> Mock { get; } = new(MockBehavior.Strict);
+        public IArray Mock => _mock.Object;
 
-        public IReadOnlyList<object> Data { get; }
+        public int Length => _data.Length;
 
-        public static Fixture Create(ArrayAdapterMembersTest testContainer)
+        public object this[int index] => _data[index];
+
+        private void SetupMock()
+        {
+            _mock.SetupGet(x => x.Length).Returns(_data.Length);
+            _mock.SetupGet(x => x.Count).Returns(_data.Length);
+
+            _mock.Setup(x => x[It.Is((int index) => index >= 0 && index < _data.Length)])
+                .Returns((int index) => _data[index]);
+
+            _mock.Setup(x => x.ConvertTo(It.Is<Type>(type => type == typeof(IEnumerable))))
+                .Returns(_data);
+        }
+
+        public static ArrayFixture Create(ArrayAdapterMembersTest testContainer)
         {
             int size = testContainer._faker.Random.Int(1, MaxDataSize);
             string[] data = testContainer._faker.Lorem.Words(size);
-            Fixture fixture = new(data);
 
-            fixture.Mock.SetupGet(x => x.Length).Returns(size);
-            fixture.Mock.SetupGet(x => x.Count).Returns(size);
-
-            fixture.Mock.Setup(x => x[It.Is((int index) => index >= 0 && index < size)])
-                .Returns((int index) => data[index]);
-
-            fixture.Mock.Setup(x => x.ConvertTo(It.Is<Type>(type => type == typeof(IEnumerable))))
-                .Returns(data);
-
-            return fixture;
+            return new(data);
         }
     }
 }
