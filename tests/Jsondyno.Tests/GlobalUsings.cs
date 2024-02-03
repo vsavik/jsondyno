@@ -6,4 +6,4 @@ global using Shouldly;
 global using Xunit;
 global using Xunit.Abstractions;
 
-global using Jsondyno.Tests.Utils;
+global using Jsondyno.Tests.Fixtures;

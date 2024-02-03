@@ -1,8 +1,8 @@
 using Jsondyno.Adapters;
 
-namespace Jsondyno.Tests.Utils;
+namespace Jsondyno.Tests.Adapters.Dynamic;
 
-internal static class MockExtensions
+internal static class ValueAdapterMockExtensions
 {
     public static void JsondynoSetupTypecast<TMock, TValue>(
         this Mock<TMock> mock,
