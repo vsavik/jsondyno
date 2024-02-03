@@ -4,7 +4,7 @@ using Jsondyno.Adapters.Dynamic;
 
 namespace Jsondyno.Tests.Adapters.Dynamic;
 
-public sealed partial class ArrayAdapterTests
+public static partial class ArrayAdapterTests
 {
     public sealed class ClassMembers : IClassFixture<FakerFixture>
     {

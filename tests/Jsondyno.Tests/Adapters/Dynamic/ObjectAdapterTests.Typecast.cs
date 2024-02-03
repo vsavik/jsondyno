@@ -4,7 +4,7 @@ using Jsondyno.Adapters.Dynamic;
 
 namespace Jsondyno.Tests.Adapters.Dynamic;
 
-public sealed partial class ObjectAdapterTests
+public static partial class ObjectAdapterTests
 {
     public sealed class Typecast
     {
