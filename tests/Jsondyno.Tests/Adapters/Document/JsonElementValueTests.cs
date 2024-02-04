@@ -1,11 +1,11 @@
 using System.Text.Json.Serialization;
 using Jsondyno.Adapters.Document;
+using Jsondyno.Tests.Fixtures.JsonBuilder;
 
 namespace Jsondyno.Tests.Adapters.Document;
 
 public sealed class JsonElementValueTests :
     IClassFixture<FakerFixture>,
-    IClassFixture<JsonFixture>,
     IDisposable
 {
     private readonly JsonFixture _json = new();
@@ -300,7 +300,7 @@ public sealed class JsonElementValueTests :
     private sealed class MockObject : JsonElementValue<MockObject>, ISampleDto
     {
         public MockObject(JsonFixture fixture, JsonSerializerOptions options)
-            : base(GetJsonElement(fixture, options), options)
+            : base(fixture.GetJsonElement(options), options)
         {
             Data = Element.EnumerateObject().First().Value.GetString()!;
         }
@@ -308,15 +308,6 @@ public sealed class JsonElementValueTests :
         protected override MockObject Self => this;
 
         public string? Data { get; init; }
-
-        private static JsonElement GetJsonElement(JsonFixture fixture, JsonSerializerOptions options)
-        {
-            using JsonDocument document = JsonDocument.Parse(
-                fixture.GetStream(),
-                options.ToDocumentOpts());
-
-            return document.RootElement.Clone();
-        }
     }
 
     public void Dispose() => _json.Dispose();

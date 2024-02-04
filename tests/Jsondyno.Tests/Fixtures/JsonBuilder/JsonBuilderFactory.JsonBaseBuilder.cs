@@ -19,9 +19,13 @@ internal static partial class JsonBuilderFactory
 
         void IPrimitiveBuilder.WriteBoolean(bool boolean) => JsonWriter.WriteBooleanValue(boolean);
 
-        void IPrimitiveBuilder.WriteNumber(int number) => JsonWriter.WriteNumberValue(number);
+        void IPrimitiveBuilder.WriteNumber(long number) => JsonWriter.WriteNumberValue(number);
+
+        void IPrimitiveBuilder.WriteNumber(ulong number) => JsonWriter.WriteNumberValue(number);
 
         void IPrimitiveBuilder.WriteNumber(double number) => JsonWriter.WriteNumberValue(number);
+
+        void IPrimitiveBuilder.WriteNumber(decimal number) => JsonWriter.WriteNumberValue(number);
 
         void IPrimitiveBuilder.WriteString(string str) => JsonWriter.WriteStringValue(str);
     }

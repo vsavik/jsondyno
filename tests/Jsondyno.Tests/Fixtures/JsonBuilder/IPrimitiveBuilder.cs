@@ -6,9 +6,13 @@ internal interface IPrimitiveBuilder
 
     private protected void WriteBoolean(bool boolean);
 
-    private protected void WriteNumber(int number);
+    private protected void WriteNumber(long number);
+
+    private protected void WriteNumber(ulong number);
 
     private protected void WriteNumber(double number);
+
+    private protected void WriteNumber(decimal number);
 
     private protected void WriteString(string str);
 }
@@ -44,7 +48,14 @@ internal interface IPrimitiveBuilder<out TSelf> : IPrimitiveBuilder, IIndent<TSe
         return Self;
     }
 
-    TSelf Number(int number)
+    TSelf Number(long number)
+    {
+        WriteNumber(number);
+
+        return Self;
+    }
+
+    TSelf Number(ulong number)
     {
         WriteNumber(number);
 
@@ -52,6 +63,13 @@ internal interface IPrimitiveBuilder<out TSelf> : IPrimitiveBuilder, IIndent<TSe
     }
 
     TSelf Number(double number)
+    {
+        WriteNumber(number);
+
+        return Self;
+    }
+
+    TSelf Number(decimal number)
     {
         WriteNumber(number);
 
