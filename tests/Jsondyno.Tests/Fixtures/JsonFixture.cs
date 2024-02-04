@@ -4,7 +4,7 @@ using Jsondyno.Tests.Fixtures.JsonBuilder;
 
 namespace Jsondyno.Tests.Fixtures;
 
-internal sealed class JsonFixture :
+public sealed class JsonFixture :
     IJsonResult,
     IJsonWriterOwner,
     IDisposable,
@@ -21,7 +21,7 @@ internal sealed class JsonFixture :
 
     public Utf8JsonWriter JsonWriter { get; }
 
-    public IJsonBuilder Builder => JsonBuilderFactory.Create(this);
+    internal IJsonBuilder Builder => JsonBuilderFactory.Create(this);
 
     public Stream GetStream()
     {
@@ -33,6 +33,7 @@ internal sealed class JsonFixture :
 
     public string GetString()
     {
+        JsonWriter.Flush();
         bool isSuccess = _stream.TryGetBuffer(out ArraySegment<byte> buffer);
         Debug.Assert(isSuccess, $"Check {_stream} ctor.");
 
