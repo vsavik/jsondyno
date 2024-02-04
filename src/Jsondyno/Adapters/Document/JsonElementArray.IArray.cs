@@ -7,17 +7,17 @@ partial class JsonElementArray : IArray
 {
     public int Length { get; }
 
-    public object? this[int index] => _data[index];
-    
-    public object?[] GetArray() => [.._data];
+    public object? this[int index] => Data[index];
 
-    public List<object?> GetList() => [.._data];
+    public object?[] GetArray() => [..Data];
 
-    public Collection<object?> GetCollection() => [.._data];
+    public List<object?> GetList() => [..Data];
 
-    public ArrayList GetArrayList() => new(_data);
+    public Collection<object?> GetCollection() => [..Data];
 
-    public LinkedList<object?> GetLinkedList() => new(_data);
+    public ArrayList GetArrayList() => new(Data);
 
-    public HashSet<object?> GetHashSet() => [.._data];
+    public LinkedList<object?> GetLinkedList() => new(Data);
+
+    public HashSet<object?> GetHashSet() => [..Data];
 }
