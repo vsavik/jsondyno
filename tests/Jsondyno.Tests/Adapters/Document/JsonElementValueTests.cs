@@ -8,7 +8,7 @@ public sealed class JsonElementValueTests :
     IClassFixture<JsonFixture>
 {
     private readonly JsonFixture _json = new();
-    
+
     private readonly ITestOutputHelper _output;
 
     private readonly Faker _faker;
@@ -96,7 +96,44 @@ public sealed class JsonElementValueTests :
     }
 
     [Fact]
-    public void CanConvertUsingWithCompatibleInterface()
+    public void CanGetFromCacheCompatibleInterfaceCreatedByConvertTo()
+    {
+        // Arrange
+        string propertyName = _faker.Random.String2(5);
+        string propertyValue = _faker.Random.String2(10);
+        string jsonStr = _json.Builder
+            .ObjectStart()
+            .___.Property(propertyName).String(propertyValue)
+            .ObjectEnd()
+            .GetString();
+
+        _output.WriteLine("Sample object json is:");
+        _output.WriteLine(jsonStr);
+
+        SampleDtoJsonConverter converter = new(propertyName);
+        _options.Converters.Add(converter);
+
+        // Act
+        object? actual = Mock.ConvertTo(typeof(SampleDto));
+        object? cached = Mock.ConvertTo(typeof(ISampleDto));
+
+        // Assert
+        SampleDto actualDto = actual
+            .ShouldNotBeNull()
+            .ShouldBeOfType<SampleDto>();
+
+        actualDto.Data.ShouldBe(propertyValue);
+        converter.ReadCount.ShouldBe(1, "Converter was invoked more than 1 time. Cache doesn't work.");
+
+        cached
+            .ShouldNotBeNull()
+            .ShouldBeAssignableTo<ISampleDto>()
+            .ShouldBeOfType<SampleDto>()
+            .ShouldBe(actualDto, ReferenceComparer<SampleDto>.Create());
+    }
+
+    [Fact]
+    public void CanGetFromCacheCompatibleInterfaceCreatedByConvertUsing()
     {
         // Arrange
         string propertyName = _faker.Random.String2(5);
@@ -115,37 +152,118 @@ public sealed class JsonElementValueTests :
 
         // Act
         SampleDto? actual = Mock.ConvertUsing(_ => new SampleDto());
-        SampleDto? cached = Mock.ConvertUsing(_ => new SampleDto());
+        object? cached = Mock.ConvertTo(typeof(ISampleDto));
 
         // Assert
         actual.ShouldNotBeNull();
         actual.Data.ShouldBe(propertyValue);
         converter.ReadCount.ShouldBe(1, "Converter was invoked more than 1 time. Cache doesn't work.");
+
+        cached
+            .ShouldNotBeNull()
+            .ShouldBeAssignableTo<ISampleDto>()
+            .ShouldBeOfType<SampleDto>()
+            .ShouldBe(actual, ReferenceComparer<SampleDto>.Create());
+    }
+
+    [Fact]
+    public void CanConvertUsingWithCompatibleInterface()
+    {
+        // Arrange
+        string propertyName = _faker.Random.String2(5);
+        string propertyValue = _faker.Random.String2(10);
+        string jsonStr = _json.Builder
+            .ObjectStart()
+            .___.Property(propertyName).String(propertyValue)
+            .ObjectEnd()
+            .GetString();
+
+        _output.WriteLine("Sample object json is:");
+        _output.WriteLine(jsonStr);
+
+        // Act
+        object? actual = Mock.ConvertTo(typeof(ISampleDto));
+        object? cached = Mock.ConvertTo(typeof(ISampleDto));
+
+        // Assert
+        ISampleDto actualDto = actual
+            .ShouldBeAssignableTo<ISampleDto>()
+            .ShouldNotBeNull()
+            .ShouldBeOfType<MockObject>();
+
+        actualDto.Data.ShouldBe(propertyValue);
+
+        cached
+            .ShouldBeAssignableTo<ISampleDto>()
+            .ShouldNotBeNull()
+            .ShouldBeOfType<MockObject>()
+            .ShouldBe(actualDto, ReferenceComparer<ISampleDto>.Create());
+    }
+
+    [Fact]
+    public void CanConvertTo()
+    {
+        // Arrange
+        string propertyValue = _faker.Random.String2(10);
+        string jsonStr = _json.Builder
+            .ObjectStart()
+            .___.Property(nameof(SampleDto.Data)).String(propertyValue)
+            .ObjectEnd()
+            .GetString();
+
+        _output.WriteLine("Sample object json is:");
+        _output.WriteLine(jsonStr);
+
+        // Act
+        object? actual = Mock.ConvertTo(typeof(SampleDto));
+        object? cached = Mock.ConvertTo(typeof(SampleDto));
+
+        // Assert
+        SampleDto actualDto = actual
+            .ShouldNotBeNull()
+            .ShouldBeOfType<SampleDto>();
+
+        actualDto.Data.ShouldBe(propertyValue);
+
+        cached
+            .ShouldNotBeNull()
+            .ShouldBeOfType<SampleDto>()
+            .ShouldBe(actualDto, ReferenceComparer<SampleDto>.Create());
+    }
+
+    [Fact]
+    public void CanConvertUsing()
+    {
+        // Arrange
+        string propertyValue = _faker.Random.String2(10);
+        string jsonStr = _json.Builder
+            .ObjectStart()
+            .___.Property(nameof(SampleDto.Data)).String(propertyValue)
+            .ObjectEnd()
+            .GetString();
+
+        _output.WriteLine("Sample object json is:");
+        _output.WriteLine(jsonStr);
+
+        // Act
+        string dataValue = _faker.Random.String2(10);
+        SampleDto? actual = Mock.ConvertUsing(_ => new SampleDto { Data = dataValue });
+        SampleDto? cached = Mock.ConvertUsing(_ => new SampleDto());
+
+        // Assert
+        actual.ShouldNotBeNull();
+        actual.Data.ShouldBe(dataValue);
         cached.ShouldBe(actual, ReferenceComparer<SampleDto>.Create());
     }
 
-    private sealed class MockObject : JsonElementValue<MockObject>
+    private interface ISampleDto
     {
-        public MockObject(JsonFixture fixture, JsonSerializerOptions options)
-            : base(GetJsonElement(fixture, options), options)
-        {
-        }
-
-        protected override MockObject Self => this;
-
-        private static JsonElement GetJsonElement(JsonFixture fixture, JsonSerializerOptions options)
-        {
-            using JsonDocument document = JsonDocument.Parse(
-                fixture.GetStream(),
-                options.ToDocumentOpts());
-
-            return document.RootElement.Clone();
-        }
+        string? Data { get; init; }
     }
 
-    private sealed class SampleDto
+    private sealed class SampleDto : ISampleDto
     {
-        public string? Data { get; set; }
+        public string? Data { get; init; }
     }
 
     private sealed class SampleDtoJsonConverter : JsonConverter<SampleDto>
@@ -176,5 +294,27 @@ public sealed class JsonElementValueTests :
             SampleDto value,
             JsonSerializerOptions options) =>
             throw new NotSupportedException();
+    }
+
+    private sealed class MockObject : JsonElementValue<MockObject>, ISampleDto
+    {
+        public MockObject(JsonFixture fixture, JsonSerializerOptions options)
+            : base(GetJsonElement(fixture, options), options)
+        {
+            Data = Element.EnumerateObject().First().Value.GetString()!;
+        }
+
+        protected override MockObject Self => this;
+
+        public string? Data { get; init; }
+
+        private static JsonElement GetJsonElement(JsonFixture fixture, JsonSerializerOptions options)
+        {
+            using JsonDocument document = JsonDocument.Parse(
+                fixture.GetStream(),
+                options.ToDocumentOpts());
+
+            return document.RootElement.Clone();
+        }
     }
 }

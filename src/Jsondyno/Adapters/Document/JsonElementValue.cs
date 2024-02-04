@@ -27,7 +27,7 @@ internal abstract class JsonElementValue<TValue> : IValue, IValue<TValue>
             return result;
         }
 
-        // In case when custom converter exists, prefer it GetXxx methods
+        // In case when custom converter exists, prefer it instead of JsonElement::GetXxx methods
         if (targetType.HasCustomConverter(Options))
         {
             return _cache.SetValue(_element.Deserialize(targetType, Options));
