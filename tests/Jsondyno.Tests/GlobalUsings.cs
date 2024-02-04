@@ -1,4 +1,5 @@
 global using System.Linq.Expressions;
+global using System.Text.Json;
 
 // External dependencies
 global using Bogus;
