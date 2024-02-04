@@ -61,6 +61,6 @@ internal static class TypeExtensions
         return underlyingTargetType is not null && sourceType == underlyingTargetType;
     }
 
-    public static bool IsCompatibleInterfaceTo(this Type interfaceType, Type interfaceImplementorType) =>
-        interfaceType.IsInterface && interfaceImplementorType.IsAssignableTo(interfaceType);
+    public static bool IsCompatibleInterfaceTo(this Type abstraction, Type implementation) =>
+        abstraction.IsInterface && implementation.IsAssignableTo(abstraction);
 }

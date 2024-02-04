@@ -10,4 +10,6 @@ global using Xunit.Abstractions;
 
 // Internal dependencies
 global using Jsondyno.Adapters;
+global using Jsondyno.Misc;
 global using Jsondyno.Tests.Fixtures;
+global using Jsondyno.Tests.Misc;

@@ -15,8 +15,14 @@ internal static partial class JsonBuilderFactory
 
         protected Utf8JsonWriter JsonWriter { get; }
 
-        public void WriteNull() => JsonWriter.WriteNullValue();
+        void IPrimitiveBuilder.WriteNull() => JsonWriter.WriteNullValue();
 
-        public void WriteNumber(int number) => JsonWriter.WriteNumberValue(number);
+        void IPrimitiveBuilder.WriteBoolean(bool boolean) => JsonWriter.WriteBooleanValue(boolean);
+
+        void IPrimitiveBuilder.WriteNumber(int number) => JsonWriter.WriteNumberValue(number);
+
+        void IPrimitiveBuilder.WriteNumber(double number) => JsonWriter.WriteNumberValue(number);
+
+        void IPrimitiveBuilder.WriteString(string str) => JsonWriter.WriteStringValue(str);
     }
 }
