@@ -23,7 +23,7 @@ public sealed class JsonElementPrimitiveTests :
         output.WriteLine($"Initializing Faker with seed: {faker.Seed}");
     }
 
-    private JsonElementPrimitive Primitive => _primitive ??= _json.CreateJsonElementPrimitive();
+    private JsonElementPrimitive Sut => _primitive ??= _json.CreateJsonElementPrimitive();
 
     [Fact]
     public void GetBoolean()
@@ -33,7 +33,7 @@ public sealed class JsonElementPrimitiveTests :
         _json.Builder.Boolean(expected);
 
         // Act
-        bool actual = Primitive.GetBoolean();
+        bool actual = Sut.GetBoolean();
 
         // Assert
         actual.ShouldBe(expected);
@@ -47,7 +47,7 @@ public sealed class JsonElementPrimitiveTests :
         _json.Builder.Number(expected);
 
         // Act
-        byte actual = Primitive.GetByte();
+        byte actual = Sut.GetByte();
 
         // Assert
         actual.ShouldBe(expected);
@@ -61,7 +61,7 @@ public sealed class JsonElementPrimitiveTests :
         _json.Builder.Number(expected);
 
         // Act
-        short actual = Primitive.GetInt16();
+        short actual = Sut.GetInt16();
 
         // Assert
         actual.ShouldBe(expected);
@@ -75,7 +75,7 @@ public sealed class JsonElementPrimitiveTests :
         _json.Builder.Number(expected);
 
         // Act
-        int actual = Primitive.GetInt32();
+        int actual = Sut.GetInt32();
 
         // Assert
         actual.ShouldBe(expected);
@@ -89,7 +89,7 @@ public sealed class JsonElementPrimitiveTests :
         _json.Builder.Number(expected);
 
         // Act
-        long actual = Primitive.GetInt64();
+        long actual = Sut.GetInt64();
 
         // Assert
         actual.ShouldBe(expected);
@@ -103,7 +103,7 @@ public sealed class JsonElementPrimitiveTests :
         _json.Builder.Number(expected);
 
         // Act
-        sbyte actual = Primitive.GetSByte();
+        sbyte actual = Sut.GetSByte();
 
         // Assert
         actual.ShouldBe(expected);
@@ -117,7 +117,7 @@ public sealed class JsonElementPrimitiveTests :
         _json.Builder.Number(expected);
 
         // Act
-        ushort actual = Primitive.GetUInt16();
+        ushort actual = Sut.GetUInt16();
 
         // Assert
         actual.ShouldBe(expected);
@@ -131,7 +131,7 @@ public sealed class JsonElementPrimitiveTests :
         _json.Builder.Number(expected);
 
         // Act
-        uint actual = Primitive.GetUInt32();
+        uint actual = Sut.GetUInt32();
 
         // Assert
         actual.ShouldBe(expected);
@@ -145,7 +145,7 @@ public sealed class JsonElementPrimitiveTests :
         _json.Builder.Number(expected);
 
         // Act
-        ulong actual = Primitive.GetUInt64();
+        ulong actual = Sut.GetUInt64();
 
         // Assert
         actual.ShouldBe(expected);
@@ -159,7 +159,7 @@ public sealed class JsonElementPrimitiveTests :
         _json.Builder.Number(expected);
 
         // Act
-        float actual = Primitive.GetSingle();
+        float actual = Sut.GetSingle();
 
         // Assert
         actual.ShouldBe(expected);
@@ -173,7 +173,7 @@ public sealed class JsonElementPrimitiveTests :
         _json.Builder.Number(expected);
 
         // Act
-        double actual = Primitive.GetDouble();
+        double actual = Sut.GetDouble();
 
         // Assert
         actual.ShouldBe(expected);
@@ -187,7 +187,7 @@ public sealed class JsonElementPrimitiveTests :
         _json.Builder.Number(expected);
 
         // Act
-        decimal actual = Primitive.GetDecimal();
+        decimal actual = Sut.GetDecimal();
 
         // Assert
         actual.ShouldBe(expected);
@@ -201,7 +201,7 @@ public sealed class JsonElementPrimitiveTests :
         _json.Builder.String(expected);
 
         // Act
-        string actual = Primitive.GetString();
+        string actual = Sut.GetString();
 
         // Assert
         actual.ShouldBe(expected);
@@ -215,7 +215,7 @@ public sealed class JsonElementPrimitiveTests :
         _json.Builder.String(expected.ToString("D"));
 
         // Act
-        Guid actual = Primitive.GetGuid();
+        Guid actual = Sut.GetGuid();
 
         // Assert
         actual.ShouldBe(expected);
@@ -229,7 +229,7 @@ public sealed class JsonElementPrimitiveTests :
         _json.Builder.String(expected.ToString("O"));
 
         // Act
-        DateTime actual = Primitive.GetDateTime();
+        DateTime actual = Sut.GetDateTime();
 
         // Assert
         actual.ShouldBe(expected);
@@ -243,7 +243,7 @@ public sealed class JsonElementPrimitiveTests :
         _json.Builder.String(expected.ToString("O"));
 
         // Act
-        DateTimeOffset actual = Primitive.GetDateTimeOffset();
+        DateTimeOffset actual = Sut.GetDateTimeOffset();
 
         // Assert
         actual.ShouldBe(expected);
@@ -257,7 +257,7 @@ public sealed class JsonElementPrimitiveTests :
         _json.Builder.String(Convert.ToBase64String(expected));
 
         // Act
-        byte[] actual = Primitive.GetBytesFromBase64();
+        byte[] actual = Sut.GetBytesFromBase64();
 
         // Assert
         actual.ShouldBe(expected);

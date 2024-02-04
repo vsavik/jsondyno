@@ -24,4 +24,14 @@ internal static class JsonResultExtensions
 
         return new JsonElementPrimitive(element, opts);
     }
+
+    public static JsonElementArray CreateJsonElementArray(
+        this IJsonResult result,
+        JsonSerializerOptions? options = null)
+    {
+        JsonSerializerOptions opts = options ?? JsonSerializerOptions.Default;
+        JsonElement element = result.GetJsonElement(opts);
+
+        return new JsonElementArray(element, opts);
+    }
 }
