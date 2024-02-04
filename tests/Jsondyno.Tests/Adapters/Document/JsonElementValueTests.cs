@@ -5,7 +5,8 @@ namespace Jsondyno.Tests.Adapters.Document;
 
 public sealed class JsonElementValueTests :
     IClassFixture<FakerFixture>,
-    IClassFixture<JsonFixture>
+    IClassFixture<JsonFixture>,
+    IDisposable
 {
     private readonly JsonFixture _json = new();
 
@@ -317,4 +318,6 @@ public sealed class JsonElementValueTests :
             return document.RootElement.Clone();
         }
     }
+
+    public void Dispose() => _json.Dispose();
 }
