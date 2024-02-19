@@ -1,60 +1,60 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace Jsondyno.Adapters.Dynamic;
+namespace Jsondyno.Internal.Dynamic;
 
 [SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
 partial class PrimitiveAdapter
 {
     public static implicit operator Boolean(PrimitiveAdapter adapter) =>
-        adapter.Value.ConvertUsing(static x => x.GetBoolean());
+        adapter.GetValue<bool>();
 
     public static implicit operator Byte(PrimitiveAdapter adapter) =>
-        adapter.Value.ConvertUsing(static x => x.GetByte());
+        adapter.GetValue<byte>();
 
     public static implicit operator Int16(PrimitiveAdapter adapter) =>
-        adapter.Value.ConvertUsing(static x => x.GetInt16());
+        adapter.GetValue<short>();
 
     public static implicit operator Int32(PrimitiveAdapter adapter) =>
-        adapter.Value.ConvertUsing(static x => x.GetInt32());
+        adapter.GetValue<int>();
 
     public static implicit operator Int64(PrimitiveAdapter adapter) =>
-        adapter.Value.ConvertUsing(static x => x.GetInt64());
+        adapter.GetValue<long>();
 
     public static implicit operator SByte(PrimitiveAdapter adapter) =>
-        adapter.Value.ConvertUsing(static x => x.GetSByte());
+        adapter.GetValue<sbyte>();
 
     public static implicit operator UInt16(PrimitiveAdapter adapter) =>
-        adapter.Value.ConvertUsing(static x => x.GetUInt16());
+        adapter.GetValue<ushort>();
 
     public static implicit operator UInt32(PrimitiveAdapter adapter) =>
-        adapter.Value.ConvertUsing(static x => x.GetUInt32());
+        adapter.GetValue<uint>();
 
     public static implicit operator UInt64(PrimitiveAdapter adapter) =>
-        adapter.Value.ConvertUsing(static x => x.GetUInt64());
+        adapter.GetValue<ulong>();
 
     public static implicit operator Single(PrimitiveAdapter adapter) =>
-        adapter.Value.ConvertUsing(static x => x.GetSingle());
+        adapter.GetValue<float>();
 
     public static implicit operator Double(PrimitiveAdapter adapter) =>
-        adapter.Value.ConvertUsing(static x => x.GetDouble());
+        adapter.GetValue<double>();
 
     public static implicit operator Decimal(PrimitiveAdapter adapter) =>
-        adapter.Value.ConvertUsing(static x => x.GetDecimal());
+        adapter.GetValue<decimal>();
 
     public static implicit operator string?(PrimitiveAdapter adapter) =>
-        adapter.Value.ConvertUsing(static x => x.GetString());
+        adapter.GetValue<string>();
 
     public static implicit operator Guid(PrimitiveAdapter adapter) =>
-        adapter.Value.ConvertUsing(static x => x.GetGuid());
+        adapter.GetValue<Guid>();
 
     public static implicit operator DateTime(PrimitiveAdapter adapter) =>
-        adapter.Value.ConvertUsing(static x => x.GetDateTime());
+        adapter.GetValue<DateTime>();
 
     public static implicit operator DateTimeOffset(PrimitiveAdapter adapter) =>
-        adapter.Value.ConvertUsing(static x => x.GetDateTimeOffset());
+        adapter.GetValue<DateTimeOffset>();
 
     public static implicit operator byte[]?(PrimitiveAdapter adapter) =>
-        adapter.Value.ConvertUsing(static x => x.GetBytesFromBase64());
+        adapter.GetValue<byte[]>();
 
     public static implicit operator Boolean?(PrimitiveAdapter adapter) => (Boolean)adapter;
 

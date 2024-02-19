@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "type": "dotnet",
+            "name": "Run Console sample",
+            "projectPath": "samples/Sample.ConsoleApp/Sample.ConsoleApp.csproj",
+            "args": [],
+        }
+    ]
+}

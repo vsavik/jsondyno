@@ -9,4 +9,7 @@ internal static class JsonSerializerOptionsExtensions
             CommentHandling = options.ReadCommentHandling,
             MaxDepth = options.MaxDepth
         };
+
+    public static JsonNodeOptions ToNodeOpts(this JsonSerializerOptions options) =>
+        new() { PropertyNameCaseInsensitive = options.PropertyNameCaseInsensitive };
 }
