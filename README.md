@@ -1,7 +1,48 @@
-# dynamic-json
-Deserialize json to C# dynamic objects.
+# Jsondyno
 
+Use C# ```dynamic``` keyword to deserialzie json data provided by [System.Text.Json](https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/overview) implementation.
 
-Run code analysis tool:
-https://www.jetbrains.com/help/resharper/ReSharper_Command_Line_Tools.html#install-and-use-resharper-command-line-tools-as-net-core-tools
-dotnet tool run jb inspectcode --build -o="ca.xml" $(&csproj)
+Access json object properties without model class definition, including [JsonSerializerOptions](https://learn.microsoft.com/en-us/dotnet/api/system.text.json.jsonserializeroptions) configurations:
+
+- [JsonSerializerOptions.PropertyNamingPolicy](https://learn.microsoft.com/en-us/dotnet/api/system.text.json.jsonserializeroptions.propertynamingpolicy)
+- [JsonSerializerOptions.PropertyNameCaseInsensitive](https://learn.microsoft.com/en-us/dotnet/api/system.text.json.jsonserializeroptions.propertynamecaseinsensitive)
+
+## Installation
+
+You can add this library to your project using [NuGet](http://www.nuget.org/).
+
+Run the following command from your favorite shell or terminal:
+
+```shell
+dotnet add package Jsondyno
+```
+
+## Quick start
+
+Deserialize json manually using [JsonSerializer](https://learn.microsoft.com/en-us/dotnet/api/system.text.json.jsonserializer) class.
+
+```csharp
+var opts = new JsonSerializerOptions
+{
+    Converters = { new Jsondyno.DynamicConverter() }
+};
+
+string json = """
+    {
+        "MyProperty": 11
+    }
+    """;
+
+dynamic obj = JsonSerializer.Deserialize<dynamic>(json, opts)!;
+int myProperty = obj.MyProperty;
+
+Console.WriteLine(myProperty); // Output: 11
+```
+
+## Documentation
+
+TBD
+
+## License
+
+Jsondyno is licensed under the [MIT](LICENSE) license.
