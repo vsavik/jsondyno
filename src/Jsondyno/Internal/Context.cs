@@ -8,8 +8,8 @@ internal sealed class Context
 
     public Context(JsonSerializerOptions options)
     {
-        Options = options;
         _propertyPolicy = options.PropertyNamingPolicy ?? NoopJsonNamingPolicy.Instance;
+        Options = options;
         ObjectKeyComparer = options.PropertyNameCaseInsensitive
             ? StringComparer.OrdinalIgnoreCase
             : StringComparer.Ordinal;

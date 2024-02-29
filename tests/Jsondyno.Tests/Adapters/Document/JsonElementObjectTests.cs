@@ -139,7 +139,7 @@ public sealed class JsonElementObjectTests :
 
         actual.ShouldBe(_data);
     }
-    
+
     /*
      *    public int Count => throw new NotImplementedException();
 

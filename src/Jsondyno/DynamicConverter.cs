@@ -5,6 +5,9 @@ using Jsondyno.Internal.Serialization;
 
 namespace Jsondyno;
 
+/// <summary>
+/// <c>JsonConverter</c> implementation that creates dynamic adapter for each json value.
+/// </summary>
 public sealed class DynamicConverter : JsonConverter<dynamic>
 {
     public override bool CanConvert(Type typeToConvert)

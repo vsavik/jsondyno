@@ -1,12 +1,12 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-using System.Collections;
+﻿using System.Collections;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json.Serialization.Metadata;
-using Sample.ConsoleApp;
+using Jsondyno;
+using static ConsoleHelper;
+
 
 Console.WriteLine("Hello, World!");
 
@@ -16,11 +16,21 @@ var opts = new JsonSerializerOptions(JsonSerializerDefaults.General)
     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
     //DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
     //PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-    PropertyNameCaseInsensitive = true,
+    PropertyNameCaseInsensitive = false,
     ReadCommentHandling = JsonCommentHandling.Skip,
     UnknownTypeHandling = JsonUnknownTypeHandling.JsonElement,
     WriteIndented = true,
-    //Converters = { new DynamConverter() },
+    Converters = { new DynamicConverter() },
+};
+
+string jsonXx = """
+    {
+        "MyProperty": 11
+    }
+    """;
+var opts2 = new JsonSerializerOptions
+{
+    Converters = { new Jsondyno.DynamicConverter() }
 };
 
 string json = """
@@ -35,7 +45,11 @@ string arrayJson = """
                    [ 42, 54 ]
                    """;
 
-string objectJson = """
+string arrayJson2 = """
+                   [ 42, 54, null, "asd", {} ]
+                   """;
+
+string arrayJson2objectJson = """
                     {
                         "a": 17,
                         "b": 42,
@@ -44,15 +58,22 @@ string objectJson = """
                     }
                     """;
 
+dynamic obj = JsonSerializer.Deserialize<dynamic>(jsonXx, opts)!;
+int myProperty = obj.MyProperty;
+
+Console.WriteLine(myProperty); // Output: 11
+
+JsonWriterOptions jsonWriterOptions = new JsonWriterOptions()
+{
+
+}
+Utf8JsonWriter utf8JsonWriter = new Utf8JsonWriter();
 
 
-
-JsonNode node = JsonNode.Parse(objectJson, new JsonNodeOptions() {PropertyNameCaseInsensitive = true})!;
-JsonObject objNode = node.AsObject();
-
-Console.WriteLine(objNode["bs"] ?? "NULL");
+JsonElement e = default!;
 
 
+JsonNode n = (JsonNode)e;
 
 /*
 using JsonDocument doc = JsonDocument.Parse(objectJson);
@@ -87,7 +108,6 @@ var jo = new JsonObject(options)
 {
     ["Obj"] = JsonValue.Create(new WeatherForecast { Data = 15, DataList = ["asd", 48] }, options)
 };
-
 
 
 //Console.WriteLine(jo["Obj"]!.);
@@ -129,6 +149,14 @@ public class WeatherForecast
 {
     public object? Data { get; set; }
     public List<object>? DataList { get; set; }
+}
+
+public static class ConsoleHelper
+{
+    public static void WriteLine<T>(T src)
+    {
+        Console.WriteLine(src?.ToString() ?? "<NULL>");
+    }
 }
 
 public sealed class DynamicCollection : DynamicObject, ISample
