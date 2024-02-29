@@ -28,6 +28,10 @@ class Build : NukeBuild
         .Before(Restore)
         .Executes(() =>
         {
+            // TODO: remove from nuke temp
+
+            Console.Write("Temp is: ");
+            Console.WriteLine(TemporaryDirectory);
         });
 
     Target Restore => _ => _

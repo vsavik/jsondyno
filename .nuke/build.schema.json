@@ -74,7 +74,6 @@
             "enum": [
               "Clean",
               "Compile",
-              "Empty",
               "Restore"
             ]
           }
@@ -87,7 +86,6 @@
             "enum": [
               "Clean",
               "Compile",
-              "Empty",
               "Restore"
             ]
           }
