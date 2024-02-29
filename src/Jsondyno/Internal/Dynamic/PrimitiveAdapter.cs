@@ -46,4 +46,6 @@ internal sealed partial class PrimitiveAdapter : DynamicObject
 
         return (T?)GetValue(targetType);
     }
+
+    public override string ToString() => _value.ToString()!;
 }

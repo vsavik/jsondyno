@@ -37,6 +37,7 @@ public sealed class DynamicConverter : JsonConverter<dynamic>
     {
         using JsonDocument document = JsonDocument.ParseValue(ref reader);
         JsonElement element = document.RootElement.Clone();
+
         return new JsonElementValue(element).ToDynamic(context);
     }
 
@@ -47,20 +48,6 @@ public sealed class DynamicConverter : JsonConverter<dynamic>
         return JsonNodeValue<JsonNode>.Convert(rootNode)!.ToDynamic(context);
     }
 
-    public override void Write(Utf8JsonWriter writer, dynamic value, JsonSerializerOptions options)
-    {
+    public override void Write(Utf8JsonWriter writer, dynamic value, JsonSerializerOptions options) =>
         throw new NotSupportedException("Currently not suported.");
-
-        /*Type inputType = value.GetType();
-        if (inputType == typeof(object))
-        {
-            writer.WriteStartObject();
-            writer.WriteEndObject();
-        }
-        else
-        {
-            // TODO: check for wrapper
-            JsonSerializer.Serialize(writer, value, inputType, options);
-        }*/
-    }
 }

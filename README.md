@@ -13,7 +13,7 @@ You can add this library to your project using [NuGet](http://www.nuget.org/).
 
 Run the following command from your favorite shell or terminal:
 
-```shell
+```sh
 dotnet add package Jsondyno
 ```
 

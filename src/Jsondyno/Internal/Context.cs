@@ -10,14 +10,14 @@ internal sealed class Context
     {
         Options = options;
         _propertyPolicy = options.PropertyNamingPolicy ?? NoopJsonNamingPolicy.Instance;
-        ObjectKeyStrategy = options.PropertyNameCaseInsensitive
-            ? CaseInsensitiveKeyStrategy.Instance
-            : CaseSensitiveKeyStrategy.Instance;
+        ObjectKeyComparer = options.PropertyNameCaseInsensitive
+            ? StringComparer.OrdinalIgnoreCase
+            : StringComparer.Ordinal;
     }
 
     public JsonSerializerOptions Options { get; }
 
-    public IJsonObjectKeyStrategy ObjectKeyStrategy { get; }
+    public StringComparer ObjectKeyComparer { get; }
 
     public PrimitiveAdapter CreatePrimitiveAdapter(IJsonValue primitive) =>
         new(primitive, Options);
@@ -30,28 +30,6 @@ internal sealed class Context
 
     public string ConvertPropertyNameToKey(string propertyName) =>
         _propertyPolicy.ConvertName(propertyName);
-
-    private sealed class CaseSensitiveKeyStrategy : IJsonObjectKeyStrategy
-    {
-        public StringComparer Comparer => StringComparer.Ordinal;
-
-        public static IJsonObjectKeyStrategy Instance { get; } =
-            new CaseSensitiveKeyStrategy();
-
-        public IJsonValue? LoadJsonValue(IJsonObject jsonObject, string key) =>
-            jsonObject.GetObjectPropertyCaseSensitive(key);
-    }
-
-    private sealed class CaseInsensitiveKeyStrategy : IJsonObjectKeyStrategy
-    {
-        public StringComparer Comparer => StringComparer.OrdinalIgnoreCase;
-
-        public static IJsonObjectKeyStrategy Instance { get; } =
-            new CaseInsensitiveKeyStrategy();
-
-        public IJsonValue? LoadJsonValue(IJsonObject jsonObject, string key) =>
-            jsonObject.GetObjectPropertyCaseInsensitive(key);
-    }
 
     private sealed class NoopJsonNamingPolicy : JsonNamingPolicy
     {

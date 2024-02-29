@@ -2,7 +2,8 @@ namespace Jsondyno.Internal;
 
 internal interface IJsonObject : IJsonValue
 {
-    IJsonValue? GetObjectPropertyCaseSensitive(string key);
+    IJsonValue? GetObjectProperty(string key);
 
-    IJsonValue? GetObjectPropertyCaseInsensitive(string key);
+    IJsonValue? GetObjectProperty(string key, StringComparer comparer) =>
+        GetObjectProperty(key);
 }

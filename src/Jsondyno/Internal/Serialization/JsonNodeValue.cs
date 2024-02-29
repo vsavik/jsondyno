@@ -35,6 +35,8 @@ internal abstract class JsonNodeValue<TNode> : IJsonValue
 
     public abstract object ToDynamic(Context context);
 
+    public override string ToString() => _node.ToIntendedJsonString();
+
     private sealed class Primitive : JsonNodeValue<JsonValue>
     {
         public Primitive(JsonNode node)
@@ -68,11 +70,7 @@ internal abstract class JsonNodeValue<TNode> : IJsonValue
         {
         }
 
-        public IJsonValue? GetObjectPropertyCaseSensitive(string key) =>
-            Convert(_node[key]);
-
-        public IJsonValue? GetObjectPropertyCaseInsensitive(string key) =>
-            Convert(_node[key]);
+        public IJsonValue? GetObjectProperty(string key) => Convert(_node[key]);
 
         public override object ToDynamic(Context context) =>
             context.CreateObjectAdapter(this);

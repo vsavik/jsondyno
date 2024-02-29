@@ -18,7 +18,7 @@ internal sealed class ObjectAdapter : DynamicObject
     }
 
     public object? this[string key] => _value
-        .GetObjectPropertyCaseSensitive(key)?
+        .GetObjectProperty(key)?
         .ToDynamic(_context);
 
     public override bool TryGetMember(GetMemberBinder binder, out object? result)
@@ -30,16 +30,14 @@ internal sealed class ObjectAdapter : DynamicObject
 
     public object? GetPropertyValue(string propertyName)
     {
-        _cache ??= new Dictionary<string, object?>(_context.ObjectKeyStrategy.Comparer);
+        _cache ??= new Dictionary<string, object?>(_context.ObjectKeyComparer);
         if (_cache.TryGetValue(propertyName, out object? propertyValue))
         {
             return propertyValue;
         }
 
         string key = _context.ConvertPropertyNameToKey(propertyName);
-        propertyValue = _context.ObjectKeyStrategy
-            .LoadJsonValue(_value, key)?.ToDynamic(_context);
-
+        propertyValue = _value.GetObjectProperty(key, _context.ObjectKeyComparer)?.ToDynamic(_context);
         _cache.Add(propertyName, propertyValue);
 
         return propertyValue;
@@ -51,4 +49,6 @@ internal sealed class ObjectAdapter : DynamicObject
 
         return true;
     }
+
+    public override string ToString() => _value.ToString()!;
 }

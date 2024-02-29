@@ -45,4 +45,6 @@ internal sealed class ArrayAdapter : DynamicObject
 
         return true;
     }
+
+    public override string ToString() => _value.ToString()!;
 }

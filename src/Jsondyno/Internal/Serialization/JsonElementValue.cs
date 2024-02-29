@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace Jsondyno.Internal.Serialization;
 
 internal sealed class JsonElementValue : IJsonArray, IJsonObject
@@ -29,29 +31,23 @@ internal sealed class JsonElementValue : IJsonArray, IJsonObject
                 return context.CreatePrimitiveAdapter(this);
         }
 
-        throw new InvalidOperationException(SR.UnknownValueKind(_element.ValueKind));
+        throw new NotSupportedException(SR.UnknownValueKind(_element.ValueKind));
     }
 
     public int GetLength() => _element.GetArrayLength();
 
     public IJsonValue? GetArrayElement(int index) => Convert(_element[index]);
 
-    public IJsonValue? GetObjectPropertyCaseSensitive(string key)
-    {
-        if (_element.TryGetProperty(key, out JsonElement element))
-        {
-            return Convert(element);
-        }
+    public IJsonValue? GetObjectProperty(string key) =>
+        _element.TryGetProperty(key, out JsonElement propertyValue)
+            ? Convert(propertyValue)
+            : null;
 
-        return null;
-    }
-
-    public IJsonValue? GetObjectPropertyCaseInsensitive(string key)
+    public IJsonValue? GetObjectProperty(string key, StringComparer comparer)
     {
         foreach (JsonProperty property in _element.EnumerateObject())
         {
-            string propertyKey = property.Name;
-            if (key.Equals(propertyKey, StringComparison.OrdinalIgnoreCase))
+            if (comparer.Equals(key, property.Name))
             {
                 return Convert(property.Value);
             }
@@ -64,4 +60,6 @@ internal sealed class JsonElementValue : IJsonArray, IJsonObject
         element.ValueKind is JsonValueKind.Undefined or JsonValueKind.Null
             ? null
             : new(element);
+
+    public override string ToString() => _element.ToIntendedJsonString();
 }
