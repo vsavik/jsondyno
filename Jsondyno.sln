@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.ConsoleApp", "sample
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.WebApp", "samples\Sample.WebApp\Sample.WebApp.csproj", "{4EFC2D45-16C4-4EAF-A705-6B503E11E289}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "build", "build\build.csproj", "{9F7F74FE-D99E-41E5-957D-B9C29D733E23}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +28,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9F7F74FE-D99E-41E5-957D-B9C29D733E23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F7F74FE-D99E-41E5-957D-B9C29D733E23}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69BDEDAF-AA77-47C3-A6F1-3F3B8DABBA68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{69BDEDAF-AA77-47C3-A6F1-3F3B8DABBA68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69BDEDAF-AA77-47C3-A6F1-3F3B8DABBA68}.Release|Any CPU.ActiveCfg = Release|Any CPU
