@@ -30,6 +30,11 @@ internal abstract class JsonNodeValue<TNode> : IJsonValue
         }
     }
 
+    public JsonElement ToJsonElement(JsonSerializerOptions options) =>
+        _node.Deserialize<JsonElement>(options);
+
+    public JsonNode ToJsonNode(JsonSerializerOptions options) => _node;
+
     public object? Deserialize(Type targetType, JsonSerializerOptions options) =>
         _node.Deserialize(targetType, options);
 

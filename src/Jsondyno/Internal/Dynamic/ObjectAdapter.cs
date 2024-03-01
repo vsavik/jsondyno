@@ -3,18 +3,13 @@ using System.Diagnostics.CodeAnalysis;
 namespace Jsondyno.Internal.Dynamic;
 
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
-internal sealed class ObjectAdapter : DynamicObject
+internal sealed class ObjectAdapter : DynamicAdapter<IJsonObject>
 {
-    private readonly IJsonObject _value;
-
-    private readonly Context _context;
-
     private Dictionary<string, object?>? _cache;
 
     public ObjectAdapter(IJsonObject value, Context context)
+        : base(value, context)
     {
-        _value = value;
-        _context = context;
     }
 
     public object? this[string key] => _value
@@ -28,7 +23,7 @@ internal sealed class ObjectAdapter : DynamicObject
         return true;
     }
 
-    public object? GetPropertyValue(string propertyName)
+    private object? GetPropertyValue(string propertyName)
     {
         _cache ??= new Dictionary<string, object?>(_context.ObjectKeyComparer);
         if (_cache.TryGetValue(propertyName, out object? propertyValue))
@@ -42,13 +37,4 @@ internal sealed class ObjectAdapter : DynamicObject
 
         return propertyValue;
     }
-
-    public override bool TryConvert(ConvertBinder binder, out object? result)
-    {
-        result = _value.Deserialize(binder.ReturnType, _context.Options);
-
-        return true;
-    }
-
-    public override string ToString() => _value.ToString()!;
 }

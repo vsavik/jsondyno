@@ -9,6 +9,11 @@ internal sealed class JsonElementValue : IJsonArray, IJsonObject
         _element = element;
     }
 
+    public JsonElement ToJsonElement(JsonSerializerOptions options) => _element;
+
+    public JsonNode ToJsonNode(JsonSerializerOptions options) =>
+        _element.Deserialize<JsonNode>(options)!;
+
     public object? Deserialize(Type targetType, JsonSerializerOptions options) =>
         _element.Deserialize(targetType, options);
 

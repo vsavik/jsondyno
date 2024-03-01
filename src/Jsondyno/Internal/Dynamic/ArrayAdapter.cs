@@ -3,12 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 namespace Jsondyno.Internal.Dynamic;
 
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
-internal sealed class ArrayAdapter : DynamicObject
+internal sealed class ArrayAdapter : DynamicAdapter<IJsonArray>
 {
-    private readonly IJsonArray _value;
-
-    private readonly Context _context;
-
     private readonly int _length;
 
     private int _lastItemUsedIndex = -1;
@@ -16,9 +12,8 @@ internal sealed class ArrayAdapter : DynamicObject
     private object? _lastItemUsed;
 
     public ArrayAdapter(IJsonArray value, Context context)
+        : base(value, context)
     {
-        _value = value;
-        _context = context;
         _length = value.GetLength();
     }
 
@@ -38,13 +33,4 @@ internal sealed class ArrayAdapter : DynamicObject
 
         return _lastItemUsed;
     }
-
-    public override bool TryConvert(ConvertBinder binder, out object? result)
-    {
-        result = _value.Deserialize(binder.ReturnType, _context.Options);
-
-        return true;
-    }
-
-    public override string ToString() => _value.ToString()!;
 }
