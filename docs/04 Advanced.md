@@ -1,0 +1,7 @@
+- deserialize dynamic with custom converters, converter attributes, etc
+    - number as string options works
+- use in aot - source gen context
+- JsonElement vs JsonNode
+- performance
+    - caching
+    - node vs element

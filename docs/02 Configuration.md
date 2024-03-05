@@ -1,0 +1,5 @@
+- configure - add options, object converter should be the only converter + add extension method for safe add to options?
+- use in console applications
+- use in web apps
+    - min web api
+    - mvc
