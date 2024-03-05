@@ -8,3 +8,5 @@
     - object prop - prop name poilcy works, case sens/ins
     - deserialize dynamic with custom converters, converter attributes, etc
         - number as string options works
+
+how foreach works

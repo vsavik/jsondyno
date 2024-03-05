@@ -20,7 +20,7 @@ internal sealed class Context
     public StringComparer ObjectKeyComparer { get; }
 
     public PrimitiveAdapter CreatePrimitiveAdapter(IJsonValue primitive) =>
-        new(primitive, Options);
+        new(primitive, this);
 
     public ArrayAdapter CreateArrayAdapter(IJsonArray jsonArray) =>
         new(jsonArray, this);
