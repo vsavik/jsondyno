@@ -1,17 +1,19 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace Jsondyno.Internal.Dynamic;
 
-[SuppressMessage("ReSharper", "UnusedMember.Global")]
-internal sealed partial class PrimitiveAdapter : DynamicAdapter<IJsonValue>
+public sealed partial class PrimitiveAdapter : DynamicObject
 {
+    private readonly IJsonValue _value;
+
+    private readonly Context _context;
+
     private object? _deserializedValue;
 
     private Type? _deserializedValueType;
 
-    public PrimitiveAdapter(IJsonValue value, Context context)
-        : base(value, context)
+    internal PrimitiveAdapter(IJsonValue value, Context context)
     {
+        _value = value;
+        _context = context;
     }
 
     public override bool TryConvert(ConvertBinder binder, out object? result)
@@ -41,4 +43,6 @@ internal sealed partial class PrimitiveAdapter : DynamicAdapter<IJsonValue>
 
         return (T?)GetValue(targetType);
     }
+
+    public override string ToString() => _value.ToString()!;
 }

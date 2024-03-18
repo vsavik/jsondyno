@@ -1,19 +1,21 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace Jsondyno.Internal.Dynamic;
 
-[SuppressMessage("ReSharper", "UnusedMember.Global")]
-internal sealed class ArrayAdapter : DynamicAdapter<IJsonArray>
+public sealed class ArrayAdapter : DynamicObject
 {
+    private readonly IJsonArray _value;
+
+    private readonly Context _context;
+
     private readonly int _length;
 
     private int _lastItemUsedIndex = -1;
 
     private object? _lastItemUsed;
 
-    public ArrayAdapter(IJsonArray value, Context context)
-        : base(value, context)
+    internal ArrayAdapter(IJsonArray value, Context context)
     {
+        _value = value;
+        _context = context;
         _length = value.GetLength();
     }
 
@@ -22,6 +24,13 @@ internal sealed class ArrayAdapter : DynamicAdapter<IJsonArray>
     public int Count => _length;
 
     public object? this[int index] => GetElementByIndex(index);
+
+    public override bool TryConvert(ConvertBinder binder, out object? result)
+    {
+        result = _value.Deserialize(binder.ReturnType, _context.Options);
+
+        return true;
+    }
 
     private object? GetElementByIndex(int index)
     {
@@ -33,4 +42,15 @@ internal sealed class ArrayAdapter : DynamicAdapter<IJsonArray>
 
         return _lastItemUsed;
     }
+
+    public override string ToString() => _value.ToString()!;
+
+    public static implicit operator JsonElement(ArrayAdapter adapter) =>
+        adapter._value.ToJsonElement(adapter._context.Options);
+
+    public static implicit operator JsonNode(ArrayAdapter adapter) =>
+        adapter._value.ToJsonNode(adapter._context.Options);
+
+    public static implicit operator JsonArray(ArrayAdapter adapter) =>
+        adapter._value.ToJsonNode(adapter._context.Options).AsArray();
 }

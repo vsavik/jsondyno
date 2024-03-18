@@ -85,4 +85,13 @@ partial class PrimitiveAdapter
     public static implicit operator DateTime?(PrimitiveAdapter adapter) => (DateTime)adapter;
 
     public static implicit operator DateTimeOffset?(PrimitiveAdapter adapter) => (DateTimeOffset)adapter;
+
+    public static implicit operator JsonElement(PrimitiveAdapter adapter) =>
+        adapter._value.ToJsonElement(adapter._context.Options);
+
+    public static implicit operator JsonNode(PrimitiveAdapter adapter) =>
+        adapter._value.ToJsonNode(adapter._context.Options);
+
+    public static implicit operator JsonValue(PrimitiveAdapter adapter) =>
+        adapter._value.ToJsonNode(adapter._context.Options).AsValue();
 }

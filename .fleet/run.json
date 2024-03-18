@@ -5,6 +5,12 @@
             "name": "Run Console sample",
             "projectPath": "samples/Sample.ConsoleApp/Sample.ConsoleApp.csproj",
             "args": [],
+        },
+        {
+            "type": "dotnet",
+            "name": "Run 01 Fundamentals sample",
+            "projectPath": "samples/Jsondyno.01_Fundamentals/Jsondyno.Fundamentals.csproj",
+            "args": [],
         }
     ]
 }

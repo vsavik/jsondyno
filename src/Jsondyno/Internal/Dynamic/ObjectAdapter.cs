@@ -1,20 +1,29 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace Jsondyno.Internal.Dynamic;
 
-[SuppressMessage("ReSharper", "UnusedMember.Global")]
-internal sealed class ObjectAdapter : DynamicAdapter<IJsonObject>
+public sealed partial class ObjectAdapter : DynamicObject
 {
+    private readonly IJsonObject _value;
+
+    private readonly Context _context;
+
     private Dictionary<string, object?>? _cache;
 
-    public ObjectAdapter(IJsonObject value, Context context)
-        : base(value, context)
+    internal ObjectAdapter(IJsonObject value, Context context)
     {
+        _value = value;
+        _context = context;
     }
 
     public object? this[string key] => _value
         .GetObjectProperty(key)?
         .ToDynamic(_context);
+
+    public override bool TryConvert(ConvertBinder binder, out object? result)
+    {
+        result = _value.Deserialize(binder.ReturnType, _context.Options);
+
+        return true;
+    }
 
     public override bool TryGetMember(GetMemberBinder binder, out object? result)
     {
@@ -37,4 +46,6 @@ internal sealed class ObjectAdapter : DynamicAdapter<IJsonObject>
 
         return propertyValue;
     }
+
+    public override string ToString() => _value.ToString()!;
 }
