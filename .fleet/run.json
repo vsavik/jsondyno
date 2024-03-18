@@ -11,6 +11,12 @@
             "name": "Run 01 Fundamentals sample",
             "projectPath": "samples/Jsondyno.01_Fundamentals/Jsondyno.Fundamentals.csproj",
             "args": [],
+        },
+        {
+            "type": "dotnet",
+            "name": "Run 02 Property naming sample",
+            "projectPath": "samples/Jsondyno.02_PropertyNaming/Jsondyno.PropertyNaming.csproj",
+            "args": [],
         }
     ]
 }

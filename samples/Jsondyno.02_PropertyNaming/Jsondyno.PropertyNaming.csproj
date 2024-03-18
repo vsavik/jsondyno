@@ -11,8 +11,4 @@
     <ProjectReference Include="..\..\src\Jsondyno\Jsondyno.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Using Include="System.Globalization" />
-  </ItemGroup>
-
 </Project>
