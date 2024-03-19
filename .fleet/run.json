@@ -2,20 +2,20 @@
     "configurations": [
         {
             "type": "dotnet",
-            "name": "Run Console sample",
-            "projectPath": "samples/Sample.ConsoleApp/Sample.ConsoleApp.csproj",
+            "name": "Run sample: console app",
+            "projectPath": "samples/01-basic-usage-console-sample/Jsondyno.ConsoleApp.csproj",
             "args": [],
         },
         {
             "type": "dotnet",
-            "name": "Run 01 Fundamentals sample",
-            "projectPath": "samples/Jsondyno.01_Fundamentals/Jsondyno.Fundamentals.csproj",
+            "name": "Run sample: minimal web API",
+            "projectPath": "samples/02-web-minimal-api-sample/Jsondyno.MinimalWebApi.csproj",
             "args": [],
         },
         {
             "type": "dotnet",
-            "name": "Run 02 Property naming sample",
-            "projectPath": "samples/Jsondyno.02_PropertyNaming/Jsondyno.PropertyNaming.csproj",
+            "name": "Run sample: controler based API",
+            "projectPath": "samples/03-web-controller-based-api-sample/Jsondyno.ControllerBasedApi.csproj",
             "args": [],
         }
     ]

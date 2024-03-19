@@ -1,0 +1,12 @@
+@HostAddress = http://localhost:5056
+
+POST {{HostAddress}}/
+Content-Type: application/json
+Accept: text/plain
+
+{
+    "firstName": "John",
+    "lastName": "Doe"
+}
+
+###

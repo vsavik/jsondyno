@@ -51,6 +51,14 @@ public sealed class DynamicConverter : JsonConverter<dynamic>
         return JsonNodeValue<JsonNode>.Convert(rootNode)!.ToDynamic(context);
     }
 
-    public override void Write(Utf8JsonWriter writer, dynamic value, JsonSerializerOptions options) =>
-        throw new NotSupportedException("Currently not suported.");
+    public override void Write(Utf8JsonWriter writer, dynamic value, JsonSerializerOptions options)
+    {
+        if (value.GetType() == typeof(object))
+        {
+            writer.WriteStartObject();
+            writer.WriteEndObject();
+        }
+
+        //throw new NotSupportedException("Currently not suported.");
+    }
 }
