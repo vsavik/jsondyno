@@ -37,7 +37,7 @@ public sealed partial class PrimitiveAdapter : DynamicObject
         return _deserializedValue;
     }
 
-    private T? GetValue<T>() where T : notnull
+    private T? GetValue<T>()
     {
         Type targetType = typeof(T);
 

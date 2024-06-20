@@ -1,6 +1,6 @@
 namespace Jsondyno.Internal.Dynamic;
 
-public sealed class ArrayAdapter : DynamicObject
+public sealed partial class ArrayAdapter : DynamicObject
 {
     private readonly IJsonArray _value;
 
@@ -44,13 +44,4 @@ public sealed class ArrayAdapter : DynamicObject
     }
 
     public override string ToString() => _value.ToString()!;
-
-    public static implicit operator JsonElement(ArrayAdapter adapter) =>
-        adapter._value.ToJsonElement(adapter._context.Options);
-
-    public static implicit operator JsonNode(ArrayAdapter adapter) =>
-        adapter._value.ToJsonNode(adapter._context.Options);
-
-    public static implicit operator JsonArray(ArrayAdapter adapter) =>
-        adapter._value.ToJsonNode(adapter._context.Options).AsArray();
 }

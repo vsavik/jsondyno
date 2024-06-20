@@ -3,7 +3,6 @@ global using System.Text.Json;
 // External dependencies
 global using Bogus;
 // Internal dependencies
-global using Jsondyno.Adapters;
 global using Jsondyno.Misc;
 global using Jsondyno.Tests.Fixtures;
 global using Jsondyno.Tests.Misc;

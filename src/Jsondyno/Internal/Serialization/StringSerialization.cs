@@ -4,7 +4,8 @@ internal static class StringSerialization
 {
     private static readonly JsonSerializerOptions s_options = new()
     {
-        DefaultIgnoreCondition = JsonIgnoreCondition.Never, WriteIndented = true
+        DefaultIgnoreCondition = JsonIgnoreCondition.Never,
+        WriteIndented = true
     };
 
     public static string ToIntendedJsonString(in this JsonElement element) =>
