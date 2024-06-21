@@ -6,7 +6,7 @@ public sealed partial class ArrayAdapter : DynamicObject
 
     private readonly Context _context;
 
-    private readonly int _length;
+    private int? _length;
 
     private int _lastItemUsedIndex = -1;
 
@@ -16,21 +16,20 @@ public sealed partial class ArrayAdapter : DynamicObject
     {
         _value = value;
         _context = context;
-        _length = value.GetLength();
     }
 
-    public int Length => _length;
+    public int Length => GetLength();
 
-    public int Count => _length;
+    public int Count => GetLength();
+
+    private int GetLength()
+    {
+        _length ??= _value.GetLength();
+
+        return _length.Value;
+    }
 
     public object? this[int index] => GetElementByIndex(index);
-
-    public override bool TryConvert(ConvertBinder binder, out object? result)
-    {
-        result = _value.Deserialize(binder.ReturnType, _context.Options);
-
-        return true;
-    }
 
     private object? GetElementByIndex(int index)
     {
@@ -41,6 +40,13 @@ public sealed partial class ArrayAdapter : DynamicObject
         }
 
         return _lastItemUsed;
+    }
+
+    public override bool TryConvert(ConvertBinder binder, out object? result)
+    {
+        result = _value.Deserialize(binder.ReturnType, _context.Options);
+
+        return true;
     }
 
     public override string ToString() => _value.ToString()!;
