@@ -9,23 +9,88 @@ public sealed class ArrayAdapterTestFixture : IClassFixture<SeedFixture>
 
     private readonly Fixture _fixture = new();
 
-    private readonly Faker _faker;
-
     public ArrayAdapterTestFixture(
         SeedFixture seedFixture,
         ITestOutputHelper output)
     {
-        _faker = seedFixture.CreateFaker(output);
+        _fixture.Inject(output);
+        _fixture.Register((ITestOutputHelper o) => seedFixture.CreateFaker(o));
         _fixture.Inject(JsonSerializerOptions.Default);
-        _fixture.Register((JsonSerializerOptions opts) => new Context(opts));
+        _fixture.Register(() => new Context(JsonSerializerOptions.Default));
         _fixture.Register((Context context) => new ArrayAdapter(_jsonArrayMock.Object, context));
+        _fixture.Register(AsFunc(ConfigureExpectedArraySize));
+        _fixture.Register(AsFunc(ConfigureExpectedConversionArray));
+        _fixture.Register(AsFunc(ConfigureExpectedArrayItems));
+    }
+
+    private int ConfigureExpectedArraySize(
+        ITestOutputHelper output,
+        Faker faker)
+    {
+        int size = faker.Random.Int(0);
+        
+        output.WriteLine($"Expected array size is {size}.");
+
+        _jsonArrayMock.Setup(jsonArray => jsonArray.GetLength())
+            .Returns(size)
+            .Verifiable(Times.Once, "Caching doesn't work.");
+
+        return size;
+    }
+
+    private string[] ConfigureExpectedConversionArray(
+        ITestOutputHelper output,
+        Faker faker)
+    {
+        string[] words = faker.Random.WordsArray(10)!;
+        JsonSerializerOptions opts = _fixture.Create<JsonSerializerOptions>();
+
+        output.WriteLine($"Expected array is '{String.Join(", ", words)}'.");
+
+        _jsonArrayMock.Setup(jsonArray => jsonArray.Deserialize(typeof(string[]), opts))
+            .Returns(words)
+            .Verifiable(Times.Once);
+
+        return words;
+    }
+
+    private (int, int, string, string) ConfigureExpectedArrayItems(
+        ITestOutputHelper output,
+        Faker faker)
+    {
+        int index1 = faker.Random.Int(0, 99);
+        int index2 = faker.Random.Int(0, 99);
+        index1 = index1 == index2 ? index2 + 1 : index1;
+        string item1 = faker.Random.String2(10);
+        string item2 = faker.Random.String2(10);
+
+        output.WriteLine($"Expected array item [{index1}] is {item1}, item [{index2}] is {item2}.");
+
+        _jsonArrayMock.Setup(jsonArray => jsonArray.GetArrayElement(index1))
+            .Returns(CreateJsonValueMock(item1))
+            .Verifiable(Times.Exactly(2));
+
+        _jsonArrayMock.Setup(jsonArray => jsonArray.GetArrayElement(index2))
+            .Returns(CreateJsonValueMock(item2))
+            .Verifiable(Times.Once);
+
+        return (index1, index2, item1, item2);
+    }
+
+    private IJsonValue CreateJsonValueMock(string expected)
+    {
+        var mock = new Mock<IJsonValue>(MockBehavior.Strict);
+        mock.Setup(jsonValue => jsonValue.ToDynamic(It.IsAny<Context>()))
+            .Returns(expected);
+
+        return mock.Object;
     }
 
     [Fact]
-    public void AssertArraySizeLoading()
+    public void VerifyArraySizeLoadingAndCaching()
     {
         // Arrange
-        ExpectedArraySize expected = new(this);
+        int expectedSize = _fixture.Create<int>();
         dynamic adapter = _fixture.Create<ArrayAdapter>();
 
         // Act
@@ -33,129 +98,46 @@ public sealed class ArrayAdapterTestFixture : IClassFixture<SeedFixture>
         int actualCount = adapter.Count;
 
         // Assert
-        actualLength.ShouldBe(expected.Size);
-        actualCount.ShouldBe(expected.Size);
+        actualLength.ShouldBe(expectedSize);
+        actualCount.ShouldBe(expectedSize);
         _jsonArrayMock.VerifyAll();
     }
 
     [Fact]
-    public void AssertTypeConversion()
+    public void VerifyTypeConversionToArray()
     {
         // Arrange
-        ExpectedArrayType expected = new(this);
+        string[] expectedArray = _fixture.Create<string[]>();
         dynamic adapter = _fixture.Create<ArrayAdapter>();
 
         // Act
-        string[] actualWords = adapter;
+        string[] actualArray = adapter;
 
         // Assert
-        actualWords.ShouldBe(expected.Words);
+        actualArray.ShouldBe(expectedArray);
         _jsonArrayMock.VerifyAll();
     }
 
     [Fact]
-    public void AssertArrayItemLoading()
+    public void VerifyItemsLoadingAndCaching()
     {
         // Arrange
-        ExpectedArrayItems expected = new(this);
+        (int index1, int index2,
+            string expectedItem1,
+            string expectedItem2) = _fixture.Create<(int, int, string, string)>();
         dynamic adapter = _fixture.Create<ArrayAdapter>();
 
         // Act
-        string actualItem1 = adapter[expected.Index1];
-        string actualItem1Cached = adapter[expected.Index1];
-        string actualItem2 = adapter[expected.Index2];
-        string actualItem1Reloaded = adapter[expected.Index1];
+        string actualItem1 = adapter[index1];
+        string actualItem1Cached = adapter[index1];
+        string actualItem2 = adapter[index2];
+        string actualItem1Reloaded = adapter[index1];
 
         // Assert
-        actualItem1.ShouldBe(expected.ExpectedItem1);
-        actualItem1Cached.ShouldBe(expected.ExpectedItem1);
-        actualItem2.ShouldBe(expected.ExpectedItem2);
-        actualItem1Reloaded.ShouldBe(expected.ExpectedItem1);
+        actualItem1.ShouldBe(expectedItem1);
+        actualItem1Cached.ShouldBe(expectedItem1);
+        actualItem2.ShouldBe(expectedItem2);
+        actualItem1Reloaded.ShouldBe(expectedItem1);
         _jsonArrayMock.VerifyAll();
-    }
-
-    private sealed class ExpectedArraySize : ICustomization
-    {
-        private readonly Mock<IJsonArray> _mock;
-
-        public ExpectedArraySize(ArrayAdapterTestFixture testFixture)
-        {
-            _mock = testFixture._jsonArrayMock;
-            Size = testFixture._faker.Random.Int(0);
-            testFixture._fixture.Customize(this);
-        }
-
-        public int Size { get; }
-
-        public void Customize(IFixture fixture)
-        {
-            _mock.Setup(jsonArray => jsonArray.GetLength())
-                .Returns(Size)
-                .Verifiable(Times.Once, "Caching doesn't work.");
-        }
-    }
-
-    private sealed class ExpectedArrayType : ICustomization
-    {
-        private readonly Mock<IJsonArray> _mock;
-
-        public ExpectedArrayType(ArrayAdapterTestFixture testFixture)
-        {
-            _mock = testFixture._jsonArrayMock;
-            Words = testFixture._faker.Random.WordsArray(10)!;
-            testFixture._fixture.Customize(this);
-        }
-
-        public string[] Words { get; }
-
-        public void Customize(IFixture fixture)
-        {
-            _mock.Setup(jsonArray => jsonArray.Deserialize(typeof(string[]), It.IsAny<JsonSerializerOptions>()))
-                .Returns(Words)
-                .Verifiable(Times.Once);
-        }
-    }
-
-    private sealed class ExpectedArrayItems : ICustomization
-    {
-        private readonly Mock<IJsonArray> _mock;
-
-        public ExpectedArrayItems(ArrayAdapterTestFixture testFixture)
-        {
-            _mock = testFixture._jsonArrayMock;
-            Index1 = testFixture._faker.Random.Int(0, 9);
-            Index2 = testFixture._faker.Random.Int(10, 20);
-            ExpectedItem1 = testFixture._faker.Random.String2(10);
-            ExpectedItem2 = testFixture._faker.Random.String2(10);
-            testFixture._fixture.Customize(this);
-        }
-
-        public int Index1 { get; }
-
-        public int Index2 { get; }
-
-        public string ExpectedItem1 { get; }
-
-        public string ExpectedItem2 { get; }
-
-        public void Customize(IFixture fixture)
-        {
-            _mock.Setup(jsonArray => jsonArray.GetArrayElement(Index1))
-                .Returns(CreateJsonValueMock(ExpectedItem1))
-                .Verifiable(Times.Exactly(2));
-
-            _mock.Setup(jsonArray => jsonArray.GetArrayElement(Index2))
-                .Returns(CreateJsonValueMock(ExpectedItem2))
-                .Verifiable(Times.Once);
-        }
-
-        private IJsonValue CreateJsonValueMock(string expected)
-        {
-            var mock = new Mock<IJsonValue>(MockBehavior.Strict);
-            mock.Setup(jsonValue => jsonValue.ToDynamic(It.IsAny<Context>()))
-                .Returns(expected);
-
-            return mock.Object;
-        }
     }
 }
