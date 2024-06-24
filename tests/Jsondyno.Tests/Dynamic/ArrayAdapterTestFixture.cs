@@ -28,7 +28,7 @@ public sealed class ArrayAdapterTestFixture : IClassFixture<SeedFixture>
         Faker faker)
     {
         int size = faker.Random.Int(0);
-        
+
         output.WriteLine($"Expected array size is {size}.");
 
         _jsonArrayMock.Setup(jsonArray => jsonArray.GetLength())
