@@ -1,7 +1,8 @@
+using System.Reflection;
+using AutoFixture.Kernel;
 using Jsondyno.Internal;
 using Jsondyno.Internal.Dynamic;
 using Jsondyno.Tests.Dynamic.Auxiliary;
-using Jsondyno.Tests.Misc;
 
 namespace Jsondyno.Tests.Dynamic;
 
@@ -11,150 +12,75 @@ public sealed class PrimitiveAdapterTestFixture : IClassFixture<SeedFixture>
 
     private readonly Fixture _fixture = new();
 
+    private readonly ITestOutputHelper _output;
+
     public PrimitiveAdapterTestFixture(ITestOutputHelper output)
     {
-        _fixture.Inject(output);
-        _fixture.Inject(JsonSerializerOptions.Default);
-        _fixture.Inject(new Context(JsonSerializerOptions.Default));
-        _fixture.Register(AsFunc(ConfigureJsonValue));
-        _fixture.Register(AsFunc(ConfigurePrimitiveAdapter));
+        _output = output;
+        _fixture.Inject(_jsonValueMock.Object);
+        _fixture.RegisterDynamicAdapters();
     }
 
-    private IJsonValue ConfigureJsonValue(
-        ITestOutputHelper output,
-        JsonSerializerOptions opts,
-        (object Value, Type Type) expected)
-    {
-        output.WriteLine(
-            $"Expected value is {expected.Value} of type {expected.Type}.");
+    public static TheoryData<DateTime> MinMaxDateTime =>
+        new(DateTime.MinValue, DateTime.MaxValue);
 
-        _jsonValueMock.Setup(jsonValue => jsonValue.Deserialize(expected.Type, opts))
-            .Returns(expected.Value)
-            .Verifiable(Times.Once, "Caching doesn't work.");
+    public static TheoryData<DateTimeOffset> MinMaxDateTimeOffset =>
+        new(DateTimeOffset.MinValue, DateTimeOffset.MaxValue);
 
-        return _jsonValueMock.Object;
-    }
-
-    private PrimitiveAdapter ConfigurePrimitiveAdapter(IJsonValue jsonValue, Context context) =>
-        new(jsonValue, context);
+    public static TheoryData<Guid> StaticGuids =>
+        new(Guid.Empty, Guid.Parse("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"));
 
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public void VerifyConversionToBoolean(bool expected) =>
+    [MemberData(nameof(MinMaxDateTime))]
+    [MemberData(nameof(MinMaxDateTimeOffset))]
+    [MemberData(nameof(StaticGuids))]
+    [ClassData(typeof(UnsignedNumberData<byte>))]
+    [ClassData(typeof(UnsignedNumberData<ushort>))]
+    [ClassData(typeof(UnsignedNumberData<uint>))]
+    [ClassData(typeof(UnsignedNumberData<ulong>))]
+    [ClassData(typeof(SignedNumberData<sbyte>))]
+    [ClassData(typeof(SignedNumberData<short>))]
+    [ClassData(typeof(SignedNumberData<int>))]
+    [ClassData(typeof(SignedNumberData<long>))]
+    [ClassData(typeof(SignedNumberData<float>))]
+    [ClassData(typeof(SignedNumberData<double>))]
+    [ClassData(typeof(SignedNumberData<decimal>))]
+    [RandomFixtureData<Configuration<SampleEnum>>]
+    [RandomFixtureData<Configuration<SampleStruct>>]
+    [RandomFixtureData<Configuration<DateTime>>]
+    [RandomFixtureData<Configuration<DateTimeOffset>>]
+    [RandomFixtureData<Configuration<Guid>>]
+    [RandomClassDataAttribute<TheoryData<byte>>]
+    [RandomClassDataAttribute<TheoryData<ushort>>]
+    [RandomClassDataAttribute<TheoryData<uint>>]
+    [RandomClassDataAttribute<TheoryData<ulong>>]
+    [RandomClassDataAttribute<TheoryData<sbyte>>]
+    [RandomClassDataAttribute<TheoryData<short>>]
+    [RandomClassDataAttribute<TheoryData<int>>]
+    [RandomClassDataAttribute<TheoryData<long>>]
+    [RandomClassDataAttribute<TheoryData<float>>]
+    [RandomClassDataAttribute<TheoryData<double>>]
+    [RandomClassDataAttribute<TheoryData<decimal>>]
+    public void VerifyConversionToValueType<T>(T expected)
+        where T : struct
+    {
         VerifyConversionToType(expected);
-
-    [Theory]
-    [MemberData<SByteData>(nameof(SByteData.SignedIntegralMinMaxZeroOne))]
-    [MemberRandomData<SByteData>(nameof(SByteData.SignedIntegralRandomPositive))]
-    [MemberRandomData<SByteData>(nameof(SByteData.SignedIntegralRandomNegative))]
-    public void VerifyConversionToSByte(sbyte expected) =>
-        VerifyConversionToType(expected);
-
-    [Theory]
-    [MemberData<Int16Data>(nameof(Int16Data.SignedIntegralMinMaxZeroOne))]
-    [MemberRandomData<Int16Data>(nameof(Int16Data.SignedIntegralRandomPositive))]
-    [MemberRandomData<Int16Data>(nameof(Int16Data.SignedIntegralRandomNegative))]
-    public void VerifyConversionToShort(short expected) =>
-        VerifyConversionToType(expected);
-
-    [Theory]
-    [MemberData<Int32Data>(nameof(Int32Data.SignedIntegralMinMaxZeroOne))]
-    [MemberRandomData<Int32Data>(nameof(Int32Data.SignedIntegralRandomPositive))]
-    [MemberRandomData<Int32Data>(nameof(Int32Data.SignedIntegralRandomNegative))]
-    public void VerifyConversionToInt(int expected) =>
-        VerifyConversionToType(expected);
-
-    [Theory]
-    [MemberData<Int64Data>(nameof(Int64Data.SignedIntegralMinMaxZeroOne))]
-    [MemberRandomData<Int64Data>(nameof(Int64Data.SignedIntegralRandomPositive))]
-    [MemberRandomData<Int64Data>(nameof(Int64Data.SignedIntegralRandomNegative))]
-    public void VerifyConversionToLong(long expected) =>
-        VerifyConversionToType(expected);
-
-    [Theory]
-    [MemberData<ByteData>(nameof(ByteData.UnsignedIntegralZeroMaxOne))]
-    [MemberRandomData<ByteData>(nameof(ByteData.UnsignedIntegralRandom))]
-    public void VerifyConversionToByte(byte expected) =>
-        VerifyConversionToType(expected);
-
-    [Theory]
-    [MemberData<UInt16Data>(nameof(UInt16Data.UnsignedIntegralZeroMaxOne))]
-    [MemberRandomData<UInt16Data>(nameof(UInt16Data.UnsignedIntegralRandom))]
-    public void VerifyConversionToUShort(ushort expected) =>
-        VerifyConversionToType(expected);
-
-    [Theory]
-    [MemberData<UInt32Data>(nameof(UInt32Data.UnsignedIntegralZeroMaxOne))]
-    [MemberRandomData<UInt32Data>(nameof(UInt32Data.UnsignedIntegralRandom))]
-    public void VerifyConversionToUInt(uint expected) =>
-        VerifyConversionToType(expected);
-
-    [Theory]
-    [MemberData<UInt64Data>(nameof(UInt64Data.UnsignedIntegralZeroMaxOne))]
-    [MemberRandomData<UInt64Data>(nameof(UInt64Data.UnsignedIntegralRandom))]
-    public void VerifyConversionToULong(ulong expected) =>
-        VerifyConversionToType(expected);
-
-    [Theory]
-    [MemberData<FloatData>(nameof(FloatData.FloatingMinMaxZeroOne))]
-    [MemberRandomData<FloatData>(nameof(FloatData.FloatingRandomPositiveBelowOne))]
-    [MemberRandomData<FloatData>(nameof(FloatData.FloatingRandomPositiveAboveOne))]
-    [MemberRandomData<FloatData>(nameof(FloatData.FloatingRandomNegativeAboveOne))]
-    [MemberRandomData<FloatData>(nameof(FloatData.FloatingRandomNegativeBelowOne))]
-    public void VerifyConversionToFloat(float expected) =>
-        VerifyConversionToType(expected);
-
-    [Theory]
-    [MemberData<DoubleData>(nameof(DoubleData.FloatingMinMaxZeroOne))]
-    [MemberRandomData<DoubleData>(nameof(DoubleData.FloatingRandomPositiveBelowOne))]
-    [MemberRandomData<DoubleData>(nameof(DoubleData.FloatingRandomPositiveAboveOne))]
-    [MemberRandomData<DoubleData>(nameof(DoubleData.FloatingRandomNegativeAboveOne))]
-    [MemberRandomData<DoubleData>(nameof(DoubleData.FloatingRandomNegativeBelowOne))]
-    public void VerifyConversionToDouble(double expected) =>
-        VerifyConversionToType(expected);
-
-    [Theory]
-    [MemberData<DecimalData>(nameof(DecimalData.FloatingMinMaxZeroOne))]
-    [MemberRandomData<DecimalData>(nameof(DecimalData.FloatingRandomPositiveBelowOne))]
-    [MemberRandomData<DecimalData>(nameof(DecimalData.FloatingRandomPositiveAboveOne))]
-    [MemberRandomData<DecimalData>(nameof(DecimalData.FloatingRandomNegativeAboveOne))]
-    [MemberRandomData<DecimalData>(nameof(DecimalData.FloatingRandomNegativeBelowOne))]
-    public void VerifyConversionToDecimal(decimal expected) =>
-        VerifyConversionToType(expected);
-
-    /*
-    [Theory]
-    [InlineAutoData]
-    public void VerifyConversionToGuid(Guid expected) =>
-        VerifyConversionToType(expected);
-
-    [Theory]
-    [ClassData(typeof(DateTimeData))]
-    public void VerifyConversionToDateTime(DateTime expected) =>
-        VerifyConversionToType(expected);
-
-    [Theory]
-    [ClassData(typeof(DateTimeOffsetData))]
-    public void VerifyConversionToDateTimeOffset(DateTimeOffset expected) =>
-        VerifyConversionToType(expected);
+        VerifyConversionToType((T?)expected);
+    }
 
     [Theory]
     [InlineData("")]
-    [InlineAutoData]
-    public void VerifyConversionToString(string expected) =>
-        VerifyConversionToType(expected);
-
-    [Theory]
-    [InlineAutoData]
-    public void VerifyConversionToByteArray(byte[] expected) =>
-        VerifyConversionToType(expected);
-        */
-
-    private void VerifyConversionToType<T>(T expected)
+    [RandomFixtureData<Configuration<string>>]
+    [RandomFixtureData<Configuration<byte[]>>]
+    [RandomFixtureData<Configuration<SampleClass>>]
+    public void VerifyConversionToType<T>(T expected)
     {
         // Arrange
-        dynamic adapter = _fixture.InjectExpected(expected).Create<PrimitiveAdapter>();
+        _output.WriteLine($"Expected type is {typeof(T).Description()}.");
+        _jsonValueMock.SetExpectedValue(expected);
+        dynamic adapter = _fixture.Create<PrimitiveAdapter>();
 
         // Act
         T actual = adapter;
@@ -165,18 +91,35 @@ public sealed class PrimitiveAdapterTestFixture : IClassFixture<SeedFixture>
         actualCached.ShouldBe(expected);
         _jsonValueMock.VerifyAll();
     }
-}
 
-file static class LocalExtensions
-{
-    public static IFixture InjectExpected<T>(this IFixture fixture, T expected)
+    public sealed class Configuration<T> : ICustomization, ISpecimenBuilder
     {
-        fixture.Inject(((object?)expected, typeof(T))); // expected maybe nullable, but never null
+        public void Customize(IFixture fixture)
+        {
+            fixture.Customizations.Add(this);
+            fixture.RegisterRandomGenerators()
+                .RegisterStringGenerator()
+                .RegisterByteArrayGenerator()
+                .RegisterDateGenerators()
+                .RegisterGuidGenerator();
 
-        return fixture;
+            fixture.Register((string str) => new SampleClass(str));
+            fixture.RegisterFactory(faker => faker.Random.Enum<SampleEnum>());
+            fixture.Register((int a) => new SampleStruct(a));
+            fixture.Freeze<Guid>();
+        }
+
+        public object? Create(object request, ISpecimenContext context)
+        {
+            if (request is ParameterInfo
+                {
+                    ParameterType.IsGenericParameter: true
+                })
+            {
+                return context.Create<T>();
+            }
+
+            return new NoSpecimen();
+        }
     }
-
-    public static T? ToNull<T>(this T value)
-        where T : struct =>
-        value;
 }
