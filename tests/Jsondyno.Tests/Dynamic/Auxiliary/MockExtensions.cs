@@ -1,40 +1,36 @@
-using Jsondyno.Internal;
-
 namespace Jsondyno.Tests.Dynamic.Auxiliary;
 
 internal static class MockExtensions
 {
-    public static void SetExpectedArraySize(
-        this Mock<IJsonArray> mock,
-        int expectedArraySize)
+    public static void InjectArraySize(this Mock<IJsonArray> mock, int size)
     {
         mock.Setup(jsonArray => jsonArray.GetLength())
-            .Returns(expectedArraySize)
+            .Returns(size)
             .Verifiable(Times.Once, "Caching doesn't work.");
     }
 
-    public static void SetExpectedArray(
-        this Mock<IJsonArray> mock,
-        string[] expectedArray)
+    public static void InjectConvertTarget<TMock, TData>(
+        this Mock<TMock> mock,
+        JsonSerializerOptions opts,
+        TData data)
+        where TMock : class, IJsonValue
     {
-        mock.Setup(jsonArray => jsonArray.Deserialize(typeof(string[]), It.IsAny<JsonSerializerOptions>()))
-            .Returns(expectedArray)
+        mock.Setup(jsonValue => jsonValue.Deserialize(typeof(TData), opts))
+            .Returns(data)
             .Verifiable(Times.Once);
     }
 
-    public static void SetExpectedArrayItems(
+    public static void InjectArrayItems(
         this Mock<IJsonArray> mock,
-        int index1,
-        int index2,
-        string item1,
-        string item2)
+        ArrayItem item1,
+        ArrayItem item2)
     {
-        mock.Setup(jsonArray => jsonArray.GetArrayElement(index1))
-            .Returns(CreateJsonValueMock(item1))
+        mock.Setup(jsonArray => jsonArray.GetArrayElement(item1.Index))
+            .Returns(CreateJsonValueMock(item1.Value))
             .Verifiable(Times.Exactly(2));
 
-        mock.Setup(jsonArray => jsonArray.GetArrayElement(index2))
-            .Returns(CreateJsonValueMock(item2))
+        mock.Setup(jsonArray => jsonArray.GetArrayElement(item2.Index))
+            .Returns(CreateJsonValueMock(item2.Value))
             .Verifiable(Times.Once);
     }
 
@@ -45,14 +41,5 @@ internal static class MockExtensions
             .Returns(expected);
 
         return mock.Object;
-    }
-
-    public static void SetExpectedValue<T>(
-        this Mock<IJsonValue> mock,
-        T expected)
-    {
-        mock.Setup(jsonValue => jsonValue.Deserialize(typeof(T), It.IsAny<JsonSerializerOptions>()))
-            .Returns(expected)
-            .Verifiable(Times.Once, "Caching doesn't work.");
     }
 }

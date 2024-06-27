@@ -1,14 +1,10 @@
-using System.Reflection;
-using AutoFixture.Kernel;
-using Jsondyno.Internal;
-using Jsondyno.Internal.Dynamic;
 using Jsondyno.Tests.Dynamic.Auxiliary;
 
 namespace Jsondyno.Tests.Dynamic;
 
-public sealed class PrimitiveAdapterTestFixture : IClassFixture<SeedFixture>
+public sealed class PrimitiveAdapterTestFixture
 {
-    private readonly Mock<IJsonValue> _jsonValueMock = new(MockBehavior.Strict);
+    private readonly Mock<IJsonValue> _mock = new(MockBehavior.Strict);
 
     private readonly Fixture _fixture = new();
 
@@ -17,8 +13,7 @@ public sealed class PrimitiveAdapterTestFixture : IClassFixture<SeedFixture>
     public PrimitiveAdapterTestFixture(ITestOutputHelper output)
     {
         _output = output;
-        _fixture.Inject(_jsonValueMock.Object);
-        _fixture.RegisterDynamicAdapters();
+        _fixture.RegisterPrimitiveAdapter(_mock);
     }
 
     public static TheoryData<DateTime> MinMaxDateTime =>
@@ -27,42 +22,39 @@ public sealed class PrimitiveAdapterTestFixture : IClassFixture<SeedFixture>
     public static TheoryData<DateTimeOffset> MinMaxDateTimeOffset =>
         new(DateTimeOffset.MinValue, DateTimeOffset.MaxValue);
 
-    public static TheoryData<Guid> StaticGuids =>
-        new(Guid.Empty, Guid.Parse("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"));
-
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    [MemberData(nameof(MinMaxDateTime))]
-    [MemberData(nameof(MinMaxDateTimeOffset))]
-    [MemberData(nameof(StaticGuids))]
-    [ClassData(typeof(UnsignedNumberData<byte>))]
-    [ClassData(typeof(UnsignedNumberData<ushort>))]
-    [ClassData(typeof(UnsignedNumberData<uint>))]
-    [ClassData(typeof(UnsignedNumberData<ulong>))]
-    [ClassData(typeof(SignedNumberData<sbyte>))]
-    [ClassData(typeof(SignedNumberData<short>))]
-    [ClassData(typeof(SignedNumberData<int>))]
-    [ClassData(typeof(SignedNumberData<long>))]
-    [ClassData(typeof(SignedNumberData<float>))]
-    [ClassData(typeof(SignedNumberData<double>))]
-    [ClassData(typeof(SignedNumberData<decimal>))]
-    [RandomFixtureData<Configuration<SampleEnum>>]
-    [RandomFixtureData<Configuration<SampleStruct>>]
-    [RandomFixtureData<Configuration<DateTime>>]
-    [RandomFixtureData<Configuration<DateTimeOffset>>]
-    [RandomFixtureData<Configuration<Guid>>]
-    [RandomClassDataAttribute<TheoryData<byte>>]
-    [RandomClassDataAttribute<TheoryData<ushort>>]
-    [RandomClassDataAttribute<TheoryData<uint>>]
-    [RandomClassDataAttribute<TheoryData<ulong>>]
-    [RandomClassDataAttribute<TheoryData<sbyte>>]
-    [RandomClassDataAttribute<TheoryData<short>>]
-    [RandomClassDataAttribute<TheoryData<int>>]
-    [RandomClassDataAttribute<TheoryData<long>>]
-    [RandomClassDataAttribute<TheoryData<float>>]
-    [RandomClassDataAttribute<TheoryData<double>>]
-    [RandomClassDataAttribute<TheoryData<decimal>>]
+    [FixtureData<Sample.EnumData>]
+    [FixtureData<Sample.StructData>]
+    [ClassData(typeof(DateTimeData.MinMax))]
+    [FixtureData<DateTimeData.Random>]
+    [ClassData(typeof(DateTimeData.MinMaxOffset))]
+    [FixtureData<DateTimeData.RandomOffset>]
+    [ClassData(typeof(GuidData.Known))]
+    [FixtureData<GuidData.Random>]
+    [ClassData(typeof(NumberData.Unsigned<byte>.ZeroOneMax))]
+    [ClassData(typeof(NumberData.Unsigned<ushort>.ZeroOneMax))]
+    [ClassData(typeof(NumberData.Unsigned<uint>.ZeroOneMax))]
+    [ClassData(typeof(NumberData.Unsigned<ulong>.ZeroOneMax))]
+    [ClassData(typeof(NumberData.Signed<sbyte>.ZeroOneMinMax))]
+    [ClassData(typeof(NumberData.Signed<short>.ZeroOneMinMax))]
+    [ClassData(typeof(NumberData.Signed<int>.ZeroOneMinMax))]
+    [ClassData(typeof(NumberData.Signed<long>.ZeroOneMinMax))]
+    [ClassData(typeof(NumberData.Signed<float>.ZeroOneMinMax))]
+    [ClassData(typeof(NumberData.Signed<double>.ZeroOneMinMax))]
+    [ClassData(typeof(NumberData.Signed<decimal>.ZeroOneMinMax))]
+    [FixtureData<NumberData.Unsigned<byte>.Random>]
+    [FixtureData<NumberData.Unsigned<ushort>.Random>]
+    [FixtureData<NumberData.Unsigned<uint>.Random>]
+    [FixtureData<NumberData.Unsigned<ulong>.Random>]
+    [FixtureData<NumberData.Signed<sbyte>.Random>]
+    [FixtureData<NumberData.Signed<short>.Random>]
+    [FixtureData<NumberData.Signed<int>.Random>]
+    [FixtureData<NumberData.Signed<long>.Random>]
+    [FixtureData<NumberData.Floating<float>.Random>]
+    [FixtureData<NumberData.Floating<double>.Random>]
+    [FixtureData<NumberData.Floating<decimal>.Random>]
     public void VerifyConversionToValueType<T>(T expected)
         where T : struct
     {
@@ -72,14 +64,14 @@ public sealed class PrimitiveAdapterTestFixture : IClassFixture<SeedFixture>
 
     [Theory]
     [InlineData("")]
-    [RandomFixtureData<Configuration<string>>]
-    [RandomFixtureData<Configuration<byte[]>>]
-    [RandomFixtureData<Configuration<SampleClass>>]
-    public void VerifyConversionToType<T>(T expected)
+    [FixtureData<StringData>]
+    [FixtureData<ByteArrayData>]
+    [FixtureData<Sample.ClassData>]
+    public void VerifyConversionToType<T>(T expectedValue)
     {
         // Arrange
         _output.WriteLine($"Expected type is {typeof(T).Description()}.");
-        _jsonValueMock.SetExpectedValue(expected);
+        _fixture.Do<JsonSerializerOptions>(opts => _mock.InjectConvertTarget(opts, expectedValue));
         dynamic adapter = _fixture.Create<PrimitiveAdapter>();
 
         // Act
@@ -87,39 +79,8 @@ public sealed class PrimitiveAdapterTestFixture : IClassFixture<SeedFixture>
         T actualCached = adapter;
 
         // Assert
-        actual.ShouldBe(expected);
-        actualCached.ShouldBe(expected);
-        _jsonValueMock.VerifyAll();
-    }
-
-    public sealed class Configuration<T> : ICustomization, ISpecimenBuilder
-    {
-        public void Customize(IFixture fixture)
-        {
-            fixture.Customizations.Add(this);
-            fixture.RegisterRandomGenerators()
-                .RegisterStringGenerator()
-                .RegisterByteArrayGenerator()
-                .RegisterDateGenerators()
-                .RegisterGuidGenerator();
-
-            fixture.Register((string str) => new SampleClass(str));
-            fixture.RegisterFactory(faker => faker.Random.Enum<SampleEnum>());
-            fixture.Register((int a) => new SampleStruct(a));
-            fixture.Freeze<Guid>();
-        }
-
-        public object? Create(object request, ISpecimenContext context)
-        {
-            if (request is ParameterInfo
-                {
-                    ParameterType.IsGenericParameter: true
-                })
-            {
-                return context.Create<T>();
-            }
-
-            return new NoSpecimen();
-        }
+        actual.ShouldBe(expectedValue);
+        actualCached.ShouldBe(expectedValue);
+        _mock.VerifyAll();
     }
 }

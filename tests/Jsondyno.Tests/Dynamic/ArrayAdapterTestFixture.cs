@@ -1,31 +1,25 @@
-using System.Reflection;
-using AutoFixture.Kernel;
-using Jsondyno.Internal;
-using Jsondyno.Internal.Dynamic;
 using Jsondyno.Tests.Dynamic.Auxiliary;
 
 namespace Jsondyno.Tests.Dynamic;
 
-public sealed class ArrayAdapterTestFixture : IClassFixture<SeedFixture>
+public sealed class ArrayAdapterTestFixture
 {
-    private readonly Mock<IJsonArray> _jsonArrayMock = new(MockBehavior.Strict);
+    private readonly Mock<IJsonArray> _mock = new(MockBehavior.Strict);
 
     private readonly Fixture _fixture = new();
 
     public ArrayAdapterTestFixture()
     {
-        _fixture.Inject(_jsonArrayMock.Object);
-        _fixture.RegisterDynamicAdapters();
+        _fixture.RegisterArrayAdapter(_mock);
     }
 
     [Theory]
-    [RandomFixtureData<Configuration>]
-    public void VerifyArraySizeLoadingAndCaching(
-        [RandomNumber<int>(Min = 22, Max = 23)]
-        int expectedArraySize)
+    [InlineData(0)]
+    [FixtureData<Auto>]
+    public void VerifyArraySizeLoadingAndCaching([RandomInt32(Min = 1)] int expectedArraySize)
     {
         // Arrange
-        _jsonArrayMock.SetExpectedArraySize(expectedArraySize);
+        _mock.InjectArraySize(expectedArraySize);
         dynamic adapter = _fixture.Create<ArrayAdapter>();
 
         // Act
@@ -35,16 +29,15 @@ public sealed class ArrayAdapterTestFixture : IClassFixture<SeedFixture>
         // Assert
         actualLength.ShouldBe(expectedArraySize);
         actualCount.ShouldBe(expectedArraySize);
-        _jsonArrayMock.VerifyAll();
+        _mock.VerifyAll();
     }
 
     [Theory]
-    [RandomFixtureData<Configuration>]
-    public void VerifyTypeConversionToArray(
-        string[] expectedArray)
+    [FixtureData<Auto>]
+    public void VerifyTypeConversionToArray([RandomWords] string[] expectedArray)
     {
         // Arrange
-        _jsonArrayMock.SetExpectedArray(expectedArray);
+        _fixture.Do<JsonSerializerOptions>(opts => _mock.InjectConvertTarget(opts, expectedArray));
         dynamic adapter = _fixture.Create<ArrayAdapter>();
 
         // Act
@@ -52,66 +45,28 @@ public sealed class ArrayAdapterTestFixture : IClassFixture<SeedFixture>
 
         // Assert
         actualArray.ShouldBe(expectedArray);
-        _jsonArrayMock.VerifyAll();
+        _mock.VerifyAll();
     }
 
     [Theory]
-    [RandomFixtureData<Configuration>]
-    public void VerifyItemsLoadingAndCaching(
-        [Customize<ExpectedIndex>] int index1,
-        [Customize<ExpectedIndex>] int index2,
-        string expectedItem1,
-        string expectedItem2)
+    [FixtureData<ArrayItemData>]
+    public void VerifyItemsLoadingAndCaching(ArrayItem item1, ArrayItem item2)
     {
         // Arrange
-        _jsonArrayMock.SetExpectedArrayItems(index1, index2, expectedItem1, expectedItem2);
+        _mock.InjectArrayItems(item1, item2);
         dynamic adapter = _fixture.Create<ArrayAdapter>();
 
         // Act
-        string actualItem1 = adapter[index1];
-        string actualItem1Cached = adapter[index1];
-        string actualItem2 = adapter[index2];
-        string actualItem1Reloaded = adapter[index1];
+        string actualItem1 = adapter[item1.Index];
+        string actualItem1Cached = adapter[item1.Index];
+        string actualItem2 = adapter[item2.Index];
+        string actualItem1Reloaded = adapter[item1.Index];
 
         // Assert
-        actualItem1.ShouldBe(expectedItem1);
-        actualItem1Cached.ShouldBe(expectedItem1);
-        actualItem2.ShouldBe(expectedItem2);
-        actualItem1Reloaded.ShouldBe(expectedItem1);
-        _jsonArrayMock.VerifyAll();
-    }
-
-    public sealed class Configuration : ICustomization
-    {
-        public void Customize(IFixture fixture)
-        {
-            fixture.RegisterRandomGenerators()
-                .RegisterStringGenerator()
-                .RegisterStringArrayGenerator();
-
-            fixture.Register((Faker faker) => CreateIndexQueue(faker));
-            fixture.Freeze<Queue<int>>();
-        }
-
-        private Queue<int> CreateIndexQueue(Faker faker) =>
-            new(faker.Random.Shuffle(Enumerable.Range(0, 100)).Take(2));
-    }
-
-    public sealed class ExpectedIndex : ParameterCustomization<int>, IParameterCustomization
-    {
-        public ExpectedIndex(ParameterInfo parameter)
-            : base(parameter)
-        {
-        }
-
-        protected override int CreateParameterValue(ISpecimenContext context)
-        {
-            Queue<int> queue = context.Create<Queue<int>>();
-
-            return queue.Dequeue();
-        }
-
-        public static ICustomization Create(ParameterInfo parameter) =>
-            new ExpectedIndex(parameter);
+        actualItem1.ShouldBe(item1.Value);
+        actualItem1Cached.ShouldBe(item1.Value);
+        actualItem2.ShouldBe(item2.Value);
+        actualItem1Reloaded.ShouldBe(item1.Value);
+        _mock.VerifyAll();
     }
 }
