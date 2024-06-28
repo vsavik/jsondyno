@@ -29,6 +29,24 @@ internal static class AdapterFixtureExtensions
             context.CreateObjectAdapter(jsonObject));
     }
 
+    public static void RegisterAdapterFactory<T>(this IFixture fixture, Mock<T> mock)
+        where T : class, IJsonValue
+    {
+        fixture.Inject(JsonSerializerOptions.Default);
+        fixture.Register((JsonSerializerOptions opts) => new Context(opts));
+        fixture.Freeze<Context>();
+        fixture.Inject(mock.Object);
+
+        fixture.Register((Context context, IJsonValue jsonValue) =>
+            context.CreatePrimitiveAdapter(jsonValue));
+
+        fixture.Register((Context context, IJsonArray jsonArray) =>
+            context.CreateArrayAdapter(jsonArray));
+
+        fixture.Register((Context context, IJsonObject jsonObject) =>
+            context.CreateObjectAdapter(jsonObject));
+    }
+
     private static void RegisterContext(this IFixture fixture)
     {
         fixture.Register((JsonSerializerOptions opts) => new Context(opts));

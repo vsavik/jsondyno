@@ -9,7 +9,7 @@ internal static class MockExtensions
             .Verifiable(Times.Once, "Caching doesn't work.");
     }
 
-    public static void InjectConvertTarget<TMock, TData>(
+    public static void InjectDeserializeResult<TMock, TData>(
         this Mock<TMock> mock,
         JsonSerializerOptions opts,
         TData data)

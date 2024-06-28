@@ -37,7 +37,7 @@ public sealed class ArrayAdapterTestFixture
     public void VerifyTypeConversionToArray([RandomWords] string[] expectedArray)
     {
         // Arrange
-        _fixture.Do<JsonSerializerOptions>(opts => _mock.InjectConvertTarget(opts, expectedArray));
+        _fixture.Do<JsonSerializerOptions>(opts => _mock.InjectDeserializeResult(opts, expectedArray));
         dynamic adapter = _fixture.Create<ArrayAdapter>();
 
         // Act

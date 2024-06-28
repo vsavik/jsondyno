@@ -16,12 +16,6 @@ public sealed class PrimitiveAdapterTestFixture
         _fixture.RegisterPrimitiveAdapter(_mock);
     }
 
-    public static TheoryData<DateTime> MinMaxDateTime =>
-        new(DateTime.MinValue, DateTime.MaxValue);
-
-    public static TheoryData<DateTimeOffset> MinMaxDateTimeOffset =>
-        new(DateTimeOffset.MinValue, DateTimeOffset.MaxValue);
-
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -71,7 +65,7 @@ public sealed class PrimitiveAdapterTestFixture
     {
         // Arrange
         _output.WriteLine($"Expected type is {typeof(T).Description()}.");
-        _fixture.Do<JsonSerializerOptions>(opts => _mock.InjectConvertTarget(opts, expectedValue));
+        _fixture.Do<JsonSerializerOptions>(opts => _mock.InjectDeserializeResult(opts, expectedValue));
         dynamic adapter = _fixture.Create<PrimitiveAdapter>();
 
         // Act

@@ -4,14 +4,14 @@ public static class Sample
 {
     public sealed class Class
     {
-        private readonly string _value;
-
         public Class(string value)
         {
-            _value = value;
+            StrPropertyValue = value;
         }
 
-        public override string ToString() => $"Sample class ({_value})";
+        public string StrPropertyValue { get; }
+
+        public override string ToString() => $"Sample class ({StrPropertyValue})";
     }
 
     public sealed class ClassData : TheoryData<Class>, ICustomization
