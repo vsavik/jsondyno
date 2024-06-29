@@ -35,9 +35,9 @@ public sealed class PrimitiveAdapterTestFixture
     [ClassData(typeof(NumberData.Signed<short>.ZeroOneMinMax))]
     [ClassData(typeof(NumberData.Signed<int>.ZeroOneMinMax))]
     [ClassData(typeof(NumberData.Signed<long>.ZeroOneMinMax))]
-    [ClassData(typeof(NumberData.Signed<float>.ZeroOneMinMax))]
-    [ClassData(typeof(NumberData.Signed<double>.ZeroOneMinMax))]
-    [ClassData(typeof(NumberData.Signed<decimal>.ZeroOneMinMax))]
+    [ClassData(typeof(NumberData.Floating<float>.ZeroOneMinMax))]
+    [ClassData(typeof(NumberData.Floating<double>.ZeroOneMinMax))]
+    [ClassData(typeof(NumberData.Floating<decimal>.ZeroOneMinMax))]
     [FixtureData<NumberData.Unsigned<byte>.Random>]
     [FixtureData<NumberData.Unsigned<ushort>.Random>]
     [FixtureData<NumberData.Unsigned<uint>.Random>]
@@ -59,12 +59,14 @@ public sealed class PrimitiveAdapterTestFixture
     [Theory]
     [InlineData("")]
     [FixtureData<StringData>]
+    [FixtureData<StringArrayData>]
     [FixtureData<ByteArrayData>]
+    [FixtureData<DictionaryData>]
     [FixtureData<Sample.ClassData>]
     public void VerifyConversionToType<T>(T expectedValue)
     {
         // Arrange
-        _output.WriteLine($"Expected type is {typeof(T).Description()}.");
+        _output.WriteLine($"Validating '{typeof(T).Description()}' type conversion.");
         _fixture.Do<JsonSerializerOptions>(opts => _mock.InjectDeserializeResult(opts, expectedValue));
         dynamic adapter = _fixture.Create<PrimitiveAdapter>();
 

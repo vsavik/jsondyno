@@ -1,6 +1,6 @@
 namespace Jsondyno.Tests.Dynamic.Auxiliary;
 
-public class ByteArrayData : TheoryData<byte[]>, ICustomization
+public sealed class ByteArrayData : TheoryData<byte[]>, ICustomization
 {
     public void Customize(IFixture fixture)
     {
