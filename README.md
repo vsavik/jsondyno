@@ -22,9 +22,11 @@ dotnet add package Jsondyno
 Deserialize json manually using [JsonSerializer](https://learn.microsoft.com/en-us/dotnet/api/system.text.json.jsonserializer) class.
 
 ```csharp
+using Jsondyno;
+
 var opts = new JsonSerializerOptions
 {
-    Converters = { new Jsondyno.DynamicConverter() }
+    Converters = { new DynamicObjectJsonConverter() }
 };
 
 string json = """

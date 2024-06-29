@@ -6,9 +6,9 @@ using Jsondyno.Internal.Serialization;
 namespace Jsondyno;
 
 /// <summary>
-/// <c>JsonConverter</c> implementation that creates dynamic adapter for each json value.
+/// <c>JsonConverter</c> implementation that converts JSON to <c>System.Dynamic</c> object.
 /// </summary>
-public sealed class DynamicConverter : JsonConverter<dynamic>
+public sealed class DynamicObjectJsonConverter : JsonConverter<dynamic>
 {
     public override bool CanConvert(Type typeToConvert)
     {
@@ -23,7 +23,10 @@ public sealed class DynamicConverter : JsonConverter<dynamic>
         return false;
     }
 
-    public override dynamic Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override dynamic Read(
+        ref Utf8JsonReader reader,
+        Type typeToConvert,
+        JsonSerializerOptions options)
     {
         var context = new Context(options);
         if (options.UnknownTypeHandling == JsonUnknownTypeHandling.JsonElement)
@@ -36,7 +39,9 @@ public sealed class DynamicConverter : JsonConverter<dynamic>
         return CreateFromJsonNode(ref reader, context);
     }
 
-    private dynamic CreateFromJsonElement(ref Utf8JsonReader reader, Context context)
+    private dynamic CreateFromJsonElement(
+        ref Utf8JsonReader reader,
+        Context context)
     {
         using JsonDocument document = JsonDocument.ParseValue(ref reader);
         JsonElement element = document.RootElement.Clone();
@@ -44,14 +49,19 @@ public sealed class DynamicConverter : JsonConverter<dynamic>
         return new JsonElementValue(element).ToDynamic(context);
     }
 
-    private dynamic CreateFromJsonNode(ref Utf8JsonReader reader, Context context)
+    private dynamic CreateFromJsonNode(
+        ref Utf8JsonReader reader,
+        Context context)
     {
         JsonNode rootNode = JsonNode.Parse(ref reader, context.Options.ToNodeOpts())!;
 
         return JsonNodeValue<JsonNode>.Convert(rootNode)!.ToDynamic(context);
     }
 
-    public override void Write(Utf8JsonWriter writer, dynamic value, JsonSerializerOptions options)
+    public override void Write(
+        Utf8JsonWriter writer,
+        dynamic value,
+        JsonSerializerOptions options)
     {
         if (value.GetType() == typeof(object))
         {

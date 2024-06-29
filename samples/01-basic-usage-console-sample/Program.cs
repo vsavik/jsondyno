@@ -1,20 +1,17 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using Jsondyno;
 
 string json = """
     {
-        "FirstName": "John",
-        "LastName": "Doe",
-        "DataList": [42, "item", null, { "X": 15.5 }],
-        "Nums": [5, 6, 2]
+      "FirstName": "John",
+      "LastName": "Doe",
+      "DataList": [42, "item", null, { "X": 15.5 }],
+      "Nums": [5, 6, 2]
     }
     """;
 
-// Add instance of DynamicConverter to JsonSerializerOptions config
-var opts = new JsonSerializerOptions
-{
-    Converters = { new DynamicConverter() }
-};
+// Add instance of DynamicObjectJsonConverter to JsonSerializerOptions config
+var opts = new JsonSerializerOptions { Converters = { new DynamicObjectJsonConverter() } };
 
 // Deserialize to dynamic variable
 dynamic rootObj = JsonSerializer.Deserialize<dynamic>(json, opts)!;

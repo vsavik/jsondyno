@@ -5,7 +5,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.ConfigureHttpJsonOptions(opts =>
 {
     JsonSerializerOptions options = opts.SerializerOptions;
-    options.Converters.Add(new Jsondyno.DynamicConverter());
+    options.Converters.Add(new Jsondyno.DynamicObjectJsonConverter());
     options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 });
 

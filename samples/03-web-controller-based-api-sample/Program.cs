@@ -7,7 +7,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers().AddJsonOptions(opts =>
 {
     JsonSerializerOptions options = opts.JsonSerializerOptions;
-    options.Converters.Add(new DynamicConverter());
+    options.Converters.Add(new DynamicObjectJsonConverter());
     options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 });
 

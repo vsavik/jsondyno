@@ -4,15 +4,15 @@ This example shows how to use `dynamic` object in AspNetCore [MinimalAPIs](https
 
 ## Configuration
 
-In [Program.cs](./Program.cs) add `Jsondyno.DynamicConverter` to JsonSerializerOptions configuration as below:
+In [Program.cs](./Program.cs) add `Jsondyno.DynamicObjectJsonConverter` to JsonSerializerOptions configuration as below:
 
-```cs
+```csharp
 builder.Services.ConfigureHttpJsonOptions(opts =>
 {
     JsonSerializerOptions options = opts.SerializerOptions;
 
     // Required
-    options.Converters.Add(new Jsondyno.DynamicConverter());
+    options.Converters.Add(new Jsondyno.DynamicObjectJsonConverter());
 
     // Custom configs
     options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
@@ -23,13 +23,13 @@ builder.Services.ConfigureHttpJsonOptions(opts =>
 
 Use `dynamic` keyword in MapXxx method parameter. Typical usage: POST request and JSON data in request body.
 
-```cs
+```csharp
 app.MapPost("/", (dynamic body) => /* Implementation */);
 ```
 
 See [Program.cs](./Program.cs) implementation.
 
-Nullable context: if body can be null or empty, use `dynamic?` parameter.
+Nullable context: if body can be null, use `dynamic?` parameter.
 
 ## Run sample
 
@@ -37,7 +37,7 @@ Use `dotnet run` command to start API.
 
 ### Test using curl utility
 
-```sh
+```shell
 curl -X 'POST' -H 'Content-Type: application/json'  -d '{ "firstName": "John", "lastName": "Doe" }' http://localhost:5182/
 ```
 
