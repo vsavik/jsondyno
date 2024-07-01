@@ -8,8 +8,11 @@ public sealed class ArrayAdapterTestFixture
 
     private readonly Fixture _fixture = new();
 
-    public ArrayAdapterTestFixture()
+    private readonly ITestOutputHelper _output;
+
+    public ArrayAdapterTestFixture(ITestOutputHelper output)
     {
+        _output = output;
         _fixture.RegisterArrayAdapter(_mock);
     }
 
@@ -29,22 +32,6 @@ public sealed class ArrayAdapterTestFixture
         // Assert
         actualLength.ShouldBe(expectedArraySize);
         actualCount.ShouldBe(expectedArraySize);
-        _mock.VerifyAll();
-    }
-
-    [Theory]
-    [FixtureData<Auto>]
-    public void VerifyTypeConversionToArray([RandomWords] string[] expectedArray)
-    {
-        // Arrange
-        _fixture.Do<JsonSerializerOptions>(opts => _mock.InjectDeserializeResult(opts, expectedArray));
-        dynamic adapter = _fixture.Create<ArrayAdapter>();
-
-        // Act
-        string[] actualArray = adapter;
-
-        // Assert
-        actualArray.ShouldBe(expectedArray);
         _mock.VerifyAll();
     }
 

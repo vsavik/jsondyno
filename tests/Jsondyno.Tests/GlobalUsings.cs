@@ -18,5 +18,3 @@ global using Jsondyno.Tests.Misc.Customizations;
 
 // Type aliases
 global using RandomInt32 = Jsondyno.Tests.Misc.RandomNumberAttribute<int>;
-global using RandomWordsAttribute =
-    Jsondyno.Tests.Misc.FixtureValueAttribute<Jsondyno.Tests.Misc.Customizations.RandomWords>;
