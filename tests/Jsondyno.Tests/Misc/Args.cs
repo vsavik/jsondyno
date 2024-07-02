@@ -18,7 +18,7 @@ public sealed class Args : NUnit.Framework.Internal.TestParameters, ITestFixture
         return this;
     }
 
-    public static Args Create<T>(T arg) =>
+    public static Args Create<T>(T? arg) =>
         new(arg) { TypeArgs = [typeof(T)] };
 
     public static Args Random<T>(Func<Faker, T> factory)

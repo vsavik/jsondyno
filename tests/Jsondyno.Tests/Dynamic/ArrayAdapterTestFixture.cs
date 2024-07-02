@@ -8,11 +8,6 @@ public abstract class ArrayAdapterTestFixture
 
     private readonly dynamic _adapter;
 
-    protected ArrayAdapterTestFixture()
-        : this(new Fixture())
-    {
-    }
-
     protected ArrayAdapterTestFixture(IFixture fixture)
     {
         fixture.Inject(_mock.Object);
@@ -99,9 +94,9 @@ public abstract class ArrayAdapterTestFixture
             var itemMock = new Mock<IJsonValue>(MockBehavior.Strict);
             itemMock
                 .SetupSequence(jsonValue => jsonValue.ToDynamic())
-                .Returns(new DynamicStub(_item1.Value))
-                .Returns(new DynamicStub(_item2.Value))
-                .Returns(new DynamicStub(_item1.Value));
+                .Returns(new DynamicStub<string>(_item1.Value))
+                .Returns(new DynamicStub<string>(_item2.Value))
+                .Returns(new DynamicStub<string>(_item1.Value));
 
             _mock.Setup(jsonArray => jsonArray.GetElement(_item1.Index))
                 .Returns(itemMock.Object)
@@ -157,6 +152,7 @@ public abstract class ArrayAdapterTestFixture
         private readonly T _expectedValue;
 
         public TypeConversionTestFixture(T expectedValue)
+            : base(new Fixture())
         {
             _expectedValue = expectedValue;
             _mock.Setup(jsonArray => jsonArray.Deserialize(typeof(T)))

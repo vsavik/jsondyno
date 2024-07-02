@@ -2,19 +2,27 @@ using System.Dynamic;
 
 namespace Jsondyno.Tests.Misc;
 
-internal sealed class DynamicStub : DynamicObject
+internal sealed class DynamicStub<T> : DynamicObject
+    where T : notnull
 {
-    private readonly string _value;
+    private readonly T _value;
 
-    public DynamicStub(string value)
+    public DynamicStub(T value)
     {
         _value = value;
     }
 
     public override bool TryConvert(ConvertBinder binder, out object? result)
     {
-        result = _value;
+        if (typeof(T) == binder.ReturnType)
+        {
+            result = _value;
 
-        return true;
+            return true;
+        }
+
+        result = null;
+
+        return false;
     }
 }
