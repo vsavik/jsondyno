@@ -1,4 +1,3 @@
-using System.Dynamic;
 using Jsondyno.Tests.Dynamic.Auxiliary;
 
 namespace Jsondyno.Tests.Dynamic;
@@ -100,9 +99,9 @@ public abstract class ArrayAdapterTestFixture
             var itemMock = new Mock<IJsonValue>(MockBehavior.Strict);
             itemMock
                 .SetupSequence(jsonValue => jsonValue.ToDynamic())
-                .Returns(new SampleDynamic(_item1.Value))
-                .Returns(new SampleDynamic(_item2.Value))
-                .Returns(new SampleDynamic(_item1.Value));
+                .Returns(new DynamicStub(_item1.Value))
+                .Returns(new DynamicStub(_item2.Value))
+                .Returns(new DynamicStub(_item1.Value));
 
             _mock.Setup(jsonArray => jsonArray.GetElement(_item1.Index))
                 .Returns(itemMock.Object)
@@ -150,23 +149,6 @@ public abstract class ArrayAdapterTestFixture
         }
 
         private record ArrayItem(int Index, string Value);
-
-        private sealed class SampleDynamic : DynamicObject
-        {
-            private readonly string _value;
-
-            public SampleDynamic(string value)
-            {
-                _value = value;
-            }
-
-            public override bool TryConvert(ConvertBinder binder, out object? result)
-            {
-                result = _value;
-
-                return true;
-            }
-        }
     }
 
     [TestFixtureSource(typeof(TypeConversionDataSource))]
