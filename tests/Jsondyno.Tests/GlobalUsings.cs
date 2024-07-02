@@ -1,20 +1,20 @@
-global using System.Linq.Expressions;
-global using System.Text.Json;
-// External dependencies
-global using Bogus;
-global using AutoFixture;
-global using Moq;
-global using Shouldly;
-global using Xunit;
-global using Xunit.Abstractions;
+// .NET dependencies
 
-// Internal dependencies
+global using System.Collections;
+global using System.Text.Json;
+
+// Nuget dependencies
+global using AutoFixture;
+global using Bogus;
+global using Moq;
+global using NUnit.Framework;
+global using Shouldly;
+
+// Jsondyno
 global using Jsondyno.Internal;
 global using Jsondyno.Internal.Dynamic;
-global using Jsondyno.Misc;
-global using Jsondyno.Tests.Fixtures;
+
+// Jsondyno.Tests
 global using Jsondyno.Tests.Misc;
-global using Jsondyno.Tests.Misc.Customizations;
 
 // Type aliases
-global using RandomInt32 = Jsondyno.Tests.Misc.RandomNumberAttribute<int>;
