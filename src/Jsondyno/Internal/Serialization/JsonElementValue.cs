@@ -1,37 +1,48 @@
+using Jsondyno.Internal.Dynamic;
+
 namespace Jsondyno.Internal.Serialization;
 
 internal sealed class JsonElementValue : IJsonArray, IJsonObject
 {
     private readonly JsonElement _element;
 
-    public JsonElementValue(in JsonElement element)
+    private readonly JsonSerializerOptions _options;
+
+    private readonly GetPropertyDelegate _propertyDelegate;
+
+    private JsonElementValue(
+        in JsonElement element,
+        JsonSerializerOptions options,
+        GetPropertyDelegate propertyDelegate)
     {
         _element = element;
+        _propertyDelegate = propertyDelegate;
+        _options = options;
     }
 
-    public JsonElement ToJsonElement(JsonSerializerOptions options) => _element;
+    public JsonElement ToJsonElement() => _element;
 
-    public JsonNode ToJsonNode(JsonSerializerOptions options) =>
-        _element.Deserialize<JsonNode>(options)!;
+    public JsonNode ToJsonNode() =>
+        _element.Deserialize<JsonNode>(_options)!;
 
-    public object? Deserialize(Type targetType, JsonSerializerOptions options) =>
-        _element.Deserialize(targetType, options);
+    public object? Deserialize(Type targetType) =>
+        _element.Deserialize(targetType, _options);
 
-    public object ToDynamic(Context context)
+    public DynamicObject ToDynamic()
     {
         switch (_element.ValueKind)
         {
             case JsonValueKind.Array:
-                return context.CreateArrayAdapter(this);
+                return new ArrayAdapter(this);
 
             case JsonValueKind.Object:
-                return context.CreateObjectAdapter(this);
+                return new ObjectAdapter(this, _options.PropertyNamingPolicy);
 
             case JsonValueKind.True:
             case JsonValueKind.False:
             case JsonValueKind.String:
             case JsonValueKind.Number:
-                return context.CreatePrimitiveAdapter(this);
+                return new PrimitiveAdapter(this);
         }
 
         throw new NotSupportedException(SR.UnknownValueKind(_element.ValueKind));
@@ -39,30 +50,40 @@ internal sealed class JsonElementValue : IJsonArray, IJsonObject
 
     public int GetLength() => _element.GetArrayLength();
 
-    public IJsonValue? GetArrayElement(int index) => Convert(_element[index]);
+    public IJsonValue? GetElement(int index) => Convert(_element[index]);
 
-    public IJsonValue? GetObjectProperty(string key) =>
-        _element.TryGetProperty(key, out JsonElement propertyValue)
-            ? Convert(propertyValue)
+    public IJsonValue? GetProperty(string key) => _propertyDelegate(this, key);
+
+    private JsonElementValue? Convert(in JsonElement element) =>
+        element.ValueKind is JsonValueKind.Undefined or JsonValueKind.Null
+            ? null
+            : new(element, _options, _propertyDelegate);
+
+    public static IJsonValue? GetPropertyCaseSensitive(JsonElementValue element, string key) =>
+        element._element.TryGetProperty(key, out JsonElement propertyValue)
+            ? element.Convert(propertyValue)
             : null;
 
-    public IJsonValue? GetObjectProperty(string key, StringComparer comparer)
+    public static IJsonValue? GetPropertyCaseInsensitive(JsonElementValue element, string key)
     {
-        foreach (JsonProperty property in _element.EnumerateObject())
+        StringComparer comparer = StringComparer.OrdinalIgnoreCase;
+        foreach (JsonProperty property in element._element.EnumerateObject())
         {
             if (comparer.Equals(key, property.Name))
             {
-                return Convert(property.Value);
+                return element.Convert(property.Value);
             }
         }
 
         return null;
     }
 
-    private static JsonElementValue? Convert(in JsonElement element) =>
-        element.ValueKind is JsonValueKind.Undefined or JsonValueKind.Null
-            ? null
-            : new(element);
-
     public override string ToString() => _element.ToIntendedJsonString();
+
+    public static JsonElementValue Create(in JsonElement element, JsonSerializerOptions options) => new(
+        in element,
+        options,
+        options.PropertyNameCaseInsensitive ? GetPropertyCaseInsensitive : GetPropertyCaseSensitive);
+
+    private delegate IJsonValue? GetPropertyDelegate(JsonElementValue element, string key);
 }

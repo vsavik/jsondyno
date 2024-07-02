@@ -32,7 +32,7 @@ partial class PrimitiveAdapter
     public static implicit operator Int64(PrimitiveAdapter adapter) =>
         adapter.GetValue<long>();
 
-    public static implicit operator Int64?(PrimitiveAdapter adapter)=>
+    public static implicit operator Int64?(PrimitiveAdapter adapter) =>
         adapter.GetValue<long?>();
 
     public static implicit operator SByte(PrimitiveAdapter adapter) =>
@@ -102,13 +102,13 @@ partial class PrimitiveAdapter
         adapter.GetValue<byte[]>();
 
     public static implicit operator JsonElement(PrimitiveAdapter adapter) =>
-        adapter._value.ToJsonElement(adapter._context.Options);
+        adapter._value.ToJsonElement();
 
     public static implicit operator JsonElement?(PrimitiveAdapter adapter) =>
-        adapter._value.ToJsonElement(adapter._context.Options);
+        adapter._value.ToJsonElement();
 
     public static implicit operator JsonNode(PrimitiveAdapter adapter) =>
-        adapter._value.ToJsonNode(adapter._context.Options);
+        adapter._value.ToJsonNode();
 
     public static implicit operator JsonValue(PrimitiveAdapter adapter) =>
         ((JsonNode)adapter).AsValue();

@@ -4,16 +4,13 @@ public sealed partial class PrimitiveAdapter : DynamicObject
 {
     private readonly IJsonValue _value;
 
-    private readonly Context _context;
-
     private object? _deserializedValue;
 
     private Type? _deserializedValueType;
 
-    internal PrimitiveAdapter(IJsonValue value, Context context)
+    internal PrimitiveAdapter(IJsonValue value)
     {
         _value = value;
-        _context = context;
     }
 
     public override bool TryConvert(ConvertBinder binder, out object? result)
@@ -31,7 +28,7 @@ public sealed partial class PrimitiveAdapter : DynamicObject
             return _deserializedValue;
         }
 
-        _deserializedValue = _value.Deserialize(targetType, _context.Options);
+        _deserializedValue = _value.Deserialize(targetType);
         _deserializedValueType = targetType;
 
         return _deserializedValue;

@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using Jsondyno.Internal;
 using Jsondyno.Internal.Dynamic;
 using Jsondyno.Internal.Serialization;
 
@@ -28,34 +27,33 @@ public sealed class DynamicObjectJsonConverter : JsonConverter<dynamic>
         Type typeToConvert,
         JsonSerializerOptions options)
     {
-        var context = new Context(options);
         if (options.UnknownTypeHandling == JsonUnknownTypeHandling.JsonElement)
         {
-            return CreateFromJsonElement(ref reader, context);
+            return CreateFromJsonElement(ref reader, options);
         }
 
         Debug.Assert(options.UnknownTypeHandling == JsonUnknownTypeHandling.JsonNode);
 
-        return CreateFromJsonNode(ref reader, context);
+        return CreateFromJsonNode(ref reader, options);
     }
 
     private dynamic CreateFromJsonElement(
         ref Utf8JsonReader reader,
-        Context context)
+        JsonSerializerOptions options)
     {
         using JsonDocument document = JsonDocument.ParseValue(ref reader);
         JsonElement element = document.RootElement.Clone();
 
-        return new JsonElementValue(element).ToDynamic(context);
+        return JsonElementValue.Create(element, options).ToDynamic();
     }
 
     private dynamic CreateFromJsonNode(
         ref Utf8JsonReader reader,
-        Context context)
+        JsonSerializerOptions options)
     {
-        JsonNode rootNode = JsonNode.Parse(ref reader, context.Options.ToNodeOpts())!;
+        JsonNode rootNode = JsonNode.Parse(ref reader, options.ToNodeOpts())!;
 
-        return JsonNodeValue<JsonNode>.Convert(rootNode)!.ToDynamic(context);
+        return JsonNodeValue<JsonNode>.Convert(rootNode, options).ToDynamic();
     }
 
     public override void Write(

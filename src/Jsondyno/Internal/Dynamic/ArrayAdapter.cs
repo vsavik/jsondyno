@@ -4,18 +4,15 @@ public sealed partial class ArrayAdapter : DynamicObject
 {
     private readonly IJsonArray _value;
 
-    private readonly Context _context;
-
     private int? _length;
 
     private int _lastItemUsedIndex = -1;
 
     private object? _lastItemUsed;
 
-    internal ArrayAdapter(IJsonArray value, Context context)
+    internal ArrayAdapter(IJsonArray value)
     {
         _value = value;
-        _context = context;
     }
 
     public int Length => GetLength();
@@ -35,7 +32,7 @@ public sealed partial class ArrayAdapter : DynamicObject
     {
         if (_lastItemUsedIndex != index)
         {
-            _lastItemUsed = _value.GetArrayElement(index)?.ToDynamic(_context);
+            _lastItemUsed = _value.GetElement(index)?.ToDynamic();
             _lastItemUsedIndex = index;
         }
 
@@ -44,7 +41,7 @@ public sealed partial class ArrayAdapter : DynamicObject
 
     public override bool TryConvert(ConvertBinder binder, out object? result)
     {
-        result = _value.Deserialize(binder.ReturnType, _context.Options);
+        result = _value.Deserialize(binder.ReturnType);
 
         return true;
     }

@@ -2,11 +2,11 @@ namespace Jsondyno.Internal;
 
 internal interface IJsonValue
 {
-    object? Deserialize(Type targetType, JsonSerializerOptions options);
+    object? Deserialize(Type targetType);
 
-    object ToDynamic(Context context);
+    DynamicObject ToDynamic();
 
-    JsonElement ToJsonElement(JsonSerializerOptions options);
+    JsonElement ToJsonElement();
 
-    JsonNode ToJsonNode(JsonSerializerOptions options);
+    JsonNode ToJsonNode();
 }

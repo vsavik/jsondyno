@@ -4,5 +4,5 @@ internal interface IJsonArray : IJsonValue
 {
     int GetLength();
 
-    IJsonValue? GetArrayElement(int index);
+    IJsonValue? GetElement(int index);
 }

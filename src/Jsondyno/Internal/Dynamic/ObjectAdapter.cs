@@ -1,50 +1,70 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Jsondyno.Internal.Dynamic;
 
 public sealed partial class ObjectAdapter : DynamicObject
 {
     private readonly IJsonObject _value;
 
-    private readonly Context _context;
+    private readonly JsonNamingPolicy? _policy;
 
     private Dictionary<string, object?>? _cache;
 
-    internal ObjectAdapter(IJsonObject value, Context context)
+    internal ObjectAdapter(IJsonObject value, JsonNamingPolicy? policy)
     {
         _value = value;
-        _context = context;
+        _policy = policy;
     }
 
-    public object? this[string key] => _value
-        .GetObjectProperty(key)?
-        .ToDynamic(_context);
+    public object? this[string key] => GetPropertyByIndex(key);
+
+    private object? GetPropertyByIndex(string key)
+    {
+        if (TryGetFromCache(key, out object? propertyValue))
+        {
+            return propertyValue;
+        }
+
+        propertyValue = _value.GetProperty(key)?.ToDynamic();
+        _cache.Add(key, propertyValue);
+
+        return propertyValue;
+    }
 
     public override bool TryConvert(ConvertBinder binder, out object? result)
     {
-        result = _value.Deserialize(binder.ReturnType, _context.Options);
+        result = _value.Deserialize(binder.ReturnType);
 
         return true;
     }
 
     public override bool TryGetMember(GetMemberBinder binder, out object? result)
     {
-        result = GetPropertyValue(binder.Name);
+        result = GetPropertyByMemberName(binder.Name);
 
         return true;
     }
 
-    private object? GetPropertyValue(string propertyName)
+    private object? GetPropertyByMemberName(string propertyName)
     {
-        _cache ??= new Dictionary<string, object?>(_context.ObjectKeyComparer);
-        if (_cache.TryGetValue(propertyName, out object? propertyValue))
+        if (TryGetFromCache(propertyName, out object? propertyValue))
         {
             return propertyValue;
         }
 
-        string key = _context.ConvertPropertyNameToKey(propertyName);
-        propertyValue = _value.GetObjectProperty(key, _context.ObjectKeyComparer)?.ToDynamic(_context);
+        string key = _policy?.ConvertName(propertyName) ?? propertyName;
+        propertyValue = _value.GetProperty(key)?.ToDynamic();
         _cache.Add(propertyName, propertyValue);
 
         return propertyValue;
+    }
+
+    [MemberNotNull(nameof(_cache))]
+    private bool TryGetFromCache(string propertyName, out object? propertyValue)
+    {
+        _cache ??= new Dictionary<string, object?>(StringComparer.Ordinal);
+
+        return _cache.TryGetValue(propertyName, out propertyValue);
     }
 
     public override string ToString() => _value.ToString()!;
