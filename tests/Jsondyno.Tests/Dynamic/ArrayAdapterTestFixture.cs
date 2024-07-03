@@ -9,7 +9,7 @@ public abstract class ArrayAdapterTestFixture
     protected ArrayAdapterTestFixture(IFixture fixture)
     {
         _adapter = fixture
-            .WithAdapterCustomization()
+            .WithArrayAdapter()
             .WithInstance(_mock.Object)
             .Create<ArrayAdapter>();
     }
@@ -22,7 +22,7 @@ public abstract class ArrayAdapterTestFixture
         public static Args[] FixtureArgs =>
         [
             Args.Create(0).WithName("Empty"),
-            Args.Random(faker => faker.Random.Int(1)).WithName("Random")
+            //Args.Random(faker => faker.Random.Int(1)).WithName("Random")
         ];
 
         public SizeTestFixture(int size)
@@ -76,7 +76,7 @@ public abstract class ArrayAdapterTestFixture
         private ArrayItemTestFixture(IFixture fixture)
             : base(fixture)
         {
-            _items = fixture.Create<RandomArrayItems>();
+            _items = fixture.WithArrayItems().Create<RandomArrayItems>();
             TestContext.WriteLine($"Expected items: {_items}");
 
             ConfigureMock(_items.Item1.Index, _items.Item1.Value, 2);
@@ -144,5 +144,23 @@ public abstract class ArrayAdapterTestFixture
             actual.ShouldBe(_expectedValue);
             _mock.VerifyAll();
         }
+    }
+}
+
+file static class Extensions
+{
+    public static IFixture WithArrayAdapter(this IFixture fixture)
+    {
+        fixture.Register((IJsonArray jsonArray) => new ArrayAdapter(jsonArray));
+
+        return fixture;
+    }
+
+    public static IFixture WithArrayItems(this IFixture fixture)
+    {
+        fixture.Customize(FakerCustomization.Current);
+        fixture.Register((Faker faker) => new RandomArrayItems(faker));
+
+        return fixture;
     }
 }

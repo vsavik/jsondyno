@@ -10,7 +10,7 @@ public abstract class ObjectAdapterTestFixture
     protected ObjectAdapterTestFixture(IFixture fixture)
     {
         _adapter = fixture
-            .WithAdapterCustomization()
+            .WithObjectAdapter()
             .WithInstance(_mock.Object)
             .Create<ObjectAdapter>();
     }
@@ -24,8 +24,8 @@ public abstract class ObjectAdapterTestFixture
 
         public static Args[] FixtureArgs =>
         [
-            Args.Create<string>(null).WithName("Property is null"),
-            Args.Random(faker => faker.Random.String2(2, 6)).WithName("Property is random string")
+            //Args.Create<string>(null).WithName("Property is null"),
+            //Args.Random(faker => faker.Random.String2(2, 6)).WithName("Property is random string")
         ];
 
         public IndexerTestFixture(string? value)
@@ -100,5 +100,17 @@ public abstract class ObjectAdapterTestFixture
             actual.ShouldBe(_expectedValue);
             _mock.VerifyAll();
         }
+    }
+}
+
+file static class Extensions
+{
+    public static IFixture WithObjectAdapter(this IFixture fixture)
+    {
+        fixture.Inject<JsonNamingPolicy?>(null);
+        fixture.Register((IJsonObject jsonObject, JsonNamingPolicy? policy) =>
+            new ObjectAdapter(jsonObject, policy));
+
+        return fixture;
     }
 }

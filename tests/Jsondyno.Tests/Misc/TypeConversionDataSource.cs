@@ -1,3 +1,5 @@
+using NUnit.Framework.Interfaces;
+
 namespace Jsondyno.Tests.Misc;
 
 public sealed class TypeConversionDataSource : IEnumerable
@@ -25,14 +27,5 @@ public sealed class TypeConversionDataSource : IEnumerable
         }
 
         public Type[]? TypeArgs { get; } = [typeof(T)];
-    }
-
-    public sealed class Asdasd : TestFixtureParameters
-    {
-        public Asdasd()
-            : base([0, 0])
-        {
-            TestName = "asasd";
-        }
     }
 }

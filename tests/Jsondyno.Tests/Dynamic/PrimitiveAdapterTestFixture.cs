@@ -15,7 +15,7 @@ public sealed class PrimitiveAdapterTestFixture<T>
     {
         _expectedValue = expectedValue;
         _adapter = new Fixture()
-            .WithAdapterCustomization()
+            .WithPrimitiveAdapter()
             .WithInstance(_mock.Object)
             .Create<PrimitiveAdapter>();
 
@@ -59,5 +59,15 @@ public sealed class PrimitiveAdapterTestFixture<T>
 
     private sealed class Stub
     {
+    }
+}
+
+file static class Extensions
+{
+    public static IFixture WithPrimitiveAdapter(this IFixture fixture)
+    {
+        fixture.Register((IJsonValue jsonValue) => new PrimitiveAdapter(jsonValue));
+
+        return fixture;
     }
 }
