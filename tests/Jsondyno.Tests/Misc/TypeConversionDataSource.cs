@@ -1,12 +1,9 @@
-using NUnit.Framework.Interfaces;
-using NUnit.Framework.Internal;
-
-namespace Jsondyno.Tests.Dynamic.Auxiliary;
+namespace Jsondyno.Tests.Misc;
 
 public sealed class TypeConversionDataSource : IEnumerable
 {
     private readonly Fixture _fixture = new();
-    
+
     public IEnumerator GetEnumerator()
     {
         yield return Make(true);
@@ -29,7 +26,7 @@ public sealed class TypeConversionDataSource : IEnumerable
 
         public Type[]? TypeArgs { get; } = [typeof(T)];
     }
-    
+
     public sealed class Asdasd : TestFixtureParameters
     {
         public Asdasd()
@@ -37,6 +34,5 @@ public sealed class TypeConversionDataSource : IEnumerable
         {
             TestName = "asasd";
         }
-        
     }
 }

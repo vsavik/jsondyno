@@ -1,5 +1,3 @@
-using Jsondyno.Tests.Dynamic.Auxiliary;
-
 namespace Jsondyno.Tests.Dynamic;
 
 public abstract class ArrayAdapterTestFixture
@@ -10,9 +8,9 @@ public abstract class ArrayAdapterTestFixture
 
     protected ArrayAdapterTestFixture(IFixture fixture)
     {
-        fixture.Inject(_mock.Object);
         _adapter = fixture
-            .Customize(new AdapterCustomization())
+            .WithAdapterCustomization()
+            .WithInstance(_mock.Object)
             .Create<ArrayAdapter>();
     }
 
@@ -23,15 +21,15 @@ public abstract class ArrayAdapterTestFixture
 
         public static Args[] FixtureArgs =>
         [
-            Args.Create(0).WithName("Empty array"),
-            Args.Random(faker => faker.Random.Int(1)).WithName("Random size")
+            Args.Create(0).WithName("Empty"),
+            Args.Random(faker => faker.Random.Int(1)).WithName("Random")
         ];
 
         public SizeTestFixture(int size)
             : base(new Fixture())
         {
-            TestContext.WriteLine($"Expected array size is {size}");
             _size = size;
+            TestContext.WriteLine($"Expected array size is {size}");
             _mock.Setup(jsonArray => jsonArray.GetLength())
                 .Returns(_size)
                 .Verifiable(Times.Once);
@@ -66,11 +64,9 @@ public abstract class ArrayAdapterTestFixture
     }
 
     [TestFixture]
-    public sealed class ArrayItemTestFixture : ArrayAdapterTestFixture, ICustomization
+    public sealed class ArrayItemTestFixture : ArrayAdapterTestFixture
     {
-        private readonly ArrayItem _item1;
-
-        private readonly ArrayItem _item2;
+        private readonly RandomArrayItems _items;
 
         public ArrayItemTestFixture()
             : this(new Fixture())
@@ -80,70 +76,48 @@ public abstract class ArrayAdapterTestFixture
         private ArrayItemTestFixture(IFixture fixture)
             : base(fixture)
         {
-            fixture.Customize(this);
-            _item1 = fixture.Create<ArrayItem>();
-            _item2 = fixture.Create<ArrayItem>();
-            TestContext.WriteLine(
-                $"Expected items: [{_item1.Index}]=\'{_item1.Value}\', [{_item2.Index}]=\'{_item2.Value}\'");
+            _items = fixture.Create<RandomArrayItems>();
+            TestContext.WriteLine($"Expected items: {_items}");
 
-            ConfigureMocks();
+            ConfigureMock(_items.Item1.Index, _items.Item1.Value, 2);
+            ConfigureMock(_items.Item2.Index, _items.Item2.Value, 1);
         }
 
-        private void ConfigureMocks()
+        private void ConfigureMock(int index, string value, int times)
         {
-            var itemMock = new Mock<IJsonValue>(MockBehavior.Strict);
-            itemMock
-                .SetupSequence(jsonValue => jsonValue.ToDynamic())
-                .Returns(new DynamicStub<string>(_item1.Value))
-                .Returns(new DynamicStub<string>(_item2.Value))
-                .Returns(new DynamicStub<string>(_item1.Value));
-
-            _mock.Setup(jsonArray => jsonArray.GetElement(_item1.Index))
-                .Returns(itemMock.Object)
-                .Verifiable(Times.Exactly(2));
-
-            _mock.Setup(jsonArray => jsonArray.GetElement(_item2.Index))
-                .Returns(itemMock.Object)
-                .Verifiable(Times.Once);
+            _mock.Setup(jsonArray => jsonArray.GetElement(index))
+                .Returns(value.ToJsonValue())
+                .Verifiable(Times.Exactly(times));
         }
 
         [Test, Order(1)]
         public void VerifyGetItem1IsLoadedByIndex() =>
-            VerifyItem(_item1);
+            VerifyItem(_items.Item1.Index, _items.Item1.Value);
 
         [Test, Order(2)]
         public void VerifItem1IsCached() =>
-            VerifyItem(_item1);
+            VerifyItem(_items.Item1.Index, _items.Item1.Value);
 
         [Test, Order(3)]
         public void VerifyGetItem2IsLoadedByIndex() =>
-            VerifyItem(_item2);
+            VerifyItem(_items.Item2.Index, _items.Item2.Value);
 
         [Test, Order(4)]
         public void VerifyGetItem1IsReloaded() =>
-            VerifyItem(_item1);
+            VerifyItem(_items.Item1.Index, _items.Item1.Value);
 
         [Test, Order(5)]
         public void VerifyNumberOfGetElementCalls() =>
             _mock.VerifyAll();
 
-        private void VerifyItem(ArrayItem item)
+        private void VerifyItem(int index, string expectedValue)
         {
             // Act
-            string actualItem = _adapter[item.Index];
+            string actualItem = _adapter[index];
 
             // Assert
-            actualItem.ShouldBe(item.Value);
+            actualItem.ShouldBe(expectedValue);
         }
-
-        public void Customize(IFixture fixture)
-        {
-            Faker faker = fixture.Create<Faker>();
-            Queue<int> queue = new(faker.Random.Shuffle(Enumerable.Range(0, 100)).Take(2));
-            fixture.Register(() => new ArrayItem(queue.Dequeue(), faker.Random.String2(2, 8)));
-        }
-
-        private record ArrayItem(int Index, string Value);
     }
 
     [TestFixtureSource(typeof(TypeConversionDataSource))]
@@ -156,7 +130,7 @@ public abstract class ArrayAdapterTestFixture
         {
             _expectedValue = expectedValue;
             _mock.Setup(jsonArray => jsonArray.Deserialize(typeof(T)))
-                .Returns(() => _expectedValue)
+                .Returns(_expectedValue)
                 .Verifiable(Times.Once);
         }
 

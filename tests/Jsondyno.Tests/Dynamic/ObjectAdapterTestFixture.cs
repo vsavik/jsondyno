@@ -1,5 +1,3 @@
-using Jsondyno.Tests.Dynamic.Auxiliary;
-
 namespace Jsondyno.Tests.Dynamic;
 
 [TestFixture]
@@ -11,9 +9,9 @@ public abstract class ObjectAdapterTestFixture
 
     protected ObjectAdapterTestFixture(IFixture fixture)
     {
-        fixture.Inject(_mock.Object);
         _adapter = fixture
-            .Customize(new AdapterCustomization())
+            .WithAdapterCustomization()
+            .WithInstance(_mock.Object)
             .Create<ObjectAdapter>();
     }
 
@@ -26,8 +24,8 @@ public abstract class ObjectAdapterTestFixture
 
         public static Args[] FixtureArgs =>
         [
-            Args.Create<string>(null).WithName("Null argument"),
-            Args.Random(faker => faker.Random.String2(2, 6)).WithName("Random string")
+            Args.Create<string>(null).WithName("Property is null"),
+            Args.Random(faker => faker.Random.String2(2, 6)).WithName("Property is random string")
         ];
 
         public IndexerTestFixture(string? value)
@@ -35,7 +33,7 @@ public abstract class ObjectAdapterTestFixture
         {
         }
 
-        public IndexerTestFixture(IFixture fixture, string? value)
+        private IndexerTestFixture(IFixture fixture, string? value)
             : base(fixture)
         {
             _key = fixture.Create<Faker>().Random.String2(1, 5);
@@ -47,22 +45,8 @@ public abstract class ObjectAdapterTestFixture
         private void ConfigureMock()
         {
             _mock.Setup(jsonObject => jsonObject.GetProperty(_key))
-                .Returns(CreateReturnValue)
+                .Returns(_value.ToJsonValue())
                 .Verifiable(Times.Once);
-        }
-
-        private IJsonValue? CreateReturnValue()
-        {
-            if (_value is null)
-            {
-                return null;
-            }
-
-            var itemMock = new Mock<IJsonValue>(MockBehavior.Strict);
-            itemMock.Setup(jsonValue => jsonValue.ToDynamic())
-                .Returns(new DynamicStub<string>(_value!));
-
-            return itemMock.Object;
         }
 
         [Test, Order(1), Repeat(2)]
@@ -83,6 +67,15 @@ public abstract class ObjectAdapterTestFixture
         }
     }
 
+    //[TestFixtureSource(nameof(FixtureArgs))]
+    public sealed class PropertyTestFixture : ObjectAdapterTestFixture
+    {
+        public PropertyTestFixture(IFixture fixture)
+            : base(fixture)
+        {
+        }
+    }
+
     [TestFixtureSource(typeof(TypeConversionDataSource))]
     public sealed class TypeConversionTestFixture<T> : ObjectAdapterTestFixture
     {
@@ -93,7 +86,7 @@ public abstract class ObjectAdapterTestFixture
         {
             _expectedValue = expectedValue;
             _mock.Setup(jsonObject => jsonObject.Deserialize(typeof(T)))
-                .Returns(() => _expectedValue)
+                .Returns(_expectedValue)
                 .Verifiable(Times.Once);
         }
 

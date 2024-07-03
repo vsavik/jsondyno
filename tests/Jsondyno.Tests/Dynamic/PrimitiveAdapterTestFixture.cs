@@ -1,5 +1,3 @@
-using Jsondyno.Tests.Dynamic.Auxiliary;
-
 namespace Jsondyno.Tests.Dynamic;
 
 [TestFixtureSource(typeof(TypeConversionDataSource))]
@@ -7,7 +5,7 @@ public sealed class PrimitiveAdapterTestFixture<T>
 {
     private readonly Mock<IJsonValue> _mock = new(MockBehavior.Strict);
 
-    private readonly ReloadSample _expectedReloadValue = new();
+    private readonly Stub _expectedReloadValue = new();
 
     private readonly T _expectedValue;
 
@@ -16,22 +14,19 @@ public sealed class PrimitiveAdapterTestFixture<T>
     public PrimitiveAdapterTestFixture(T expectedValue)
     {
         _expectedValue = expectedValue;
+        _adapter = new Fixture()
+            .WithAdapterCustomization()
+            .WithInstance(_mock.Object)
+            .Create<PrimitiveAdapter>();
 
-        IFixture fixture = new Fixture().Customize(new AdapterCustomization());
-        fixture.Inject(_mock.Object);
-        _adapter = fixture.Create<PrimitiveAdapter>();
-
-        ConfigureMock();
+        ConfigureMock(_expectedValue);
+        ConfigureMock(_expectedReloadValue);
     }
 
-    private void ConfigureMock()
+    private void ConfigureMock<TValue>(TValue item)
     {
-        _mock.Setup(jsonValue => jsonValue.Deserialize(typeof(T)))
-            .Returns(_expectedValue)
-            .Verifiable(Times.Once);
-
-        _mock.Setup(jsonValue => jsonValue.Deserialize(typeof(ReloadSample)))
-            .Returns(_expectedReloadValue)
+        _mock.Setup(jsonValue => jsonValue.Deserialize(typeof(TValue)))
+            .Returns(item)
             .Verifiable(Times.Once);
     }
 
@@ -49,7 +44,7 @@ public sealed class PrimitiveAdapterTestFixture<T>
     public void VerifyTypeConversionCacheReset()
     {
         // Act
-        ReloadSample actual = _adapter;
+        Stub actual = _adapter;
 
         // Assert
         actual.ShouldBe(_expectedReloadValue);
@@ -62,7 +57,7 @@ public sealed class PrimitiveAdapterTestFixture<T>
         _mock.VerifyAll();
     }
 
-    private sealed class ReloadSample
+    private sealed class Stub
     {
     }
 }
