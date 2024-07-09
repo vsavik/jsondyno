@@ -1,6 +1,6 @@
 using System.Diagnostics;
-using Jsondyno.Internal.Dynamic;
-using Jsondyno.Internal.Serialization;
+using Jsondyno.Dynamic;
+using Jsondyno.Internal;
 
 namespace Jsondyno;
 
@@ -61,12 +61,14 @@ public sealed class DynamicObjectJsonConverter : JsonConverter<dynamic>
         dynamic value,
         JsonSerializerOptions options)
     {
-        if (value.GetType() == typeof(object))
+        Type type = value.GetType();
+        if (type == typeof(object) ||
+            type == typeof(ArrayAdapter) ||
+            type == typeof(ObjectAdapter) ||
+            type == typeof(PrimitiveAdapter))
         {
             writer.WriteStartObject();
             writer.WriteEndObject();
         }
-
-        //throw new NotSupportedException("Currently not suported.");
     }
 }

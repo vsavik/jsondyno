@@ -6,7 +6,9 @@ internal interface IJsonValue
 
     DynamicObject ToDynamic();
 
-    JsonElement ToJsonElement();
+    string ToString();
 
-    JsonNode ToJsonNode();
+    JsonElement ToJsonElement() => (JsonElement)Deserialize(typeof(JsonElement))!;
+
+    JsonNode ToJsonNode() => (JsonNode)Deserialize(typeof(JsonNode))!;
 }

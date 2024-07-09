@@ -1,6 +1,8 @@
-namespace Jsondyno.Internal.Dynamic;
+using Jsondyno.Internal;
 
-public sealed partial class ArrayAdapter : DynamicObject
+namespace Jsondyno.Dynamic;
+
+public sealed class ArrayAdapter : Adapter
 {
     private readonly IJsonArray _value;
 
@@ -15,18 +17,15 @@ public sealed partial class ArrayAdapter : DynamicObject
         _value = value;
     }
 
+    private protected override IJsonValue JsonValue => _value;
+
     public int Length => GetLength();
 
     public int Count => GetLength();
 
-    private int GetLength()
-    {
-        _length ??= _value.GetLength();
-
-        return _length.Value;
-    }
-
     public object? this[int index] => GetElementByIndex(index);
+
+    private int GetLength() => _length ??= _value.GetLength();
 
     private object? GetElementByIndex(int index)
     {
@@ -38,13 +37,4 @@ public sealed partial class ArrayAdapter : DynamicObject
 
         return _lastItemUsed;
     }
-
-    public override bool TryConvert(ConvertBinder binder, out object? result)
-    {
-        result = _value.Deserialize(binder.ReturnType);
-
-        return true;
-    }
-
-    public override string ToString() => _value.ToString()!;
 }

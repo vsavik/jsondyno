@@ -1,6 +1,6 @@
-namespace Jsondyno.Internal.Serialization;
+namespace Jsondyno.Internal;
 
-internal static class StringSerialization
+internal static class JsonSerializationExtensions
 {
     private static readonly JsonSerializerOptions s_options = new()
     {

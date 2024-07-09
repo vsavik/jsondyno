@@ -1,8 +1,8 @@
-using System.Diagnostics.CodeAnalysis;
+using Jsondyno.Internal;
 
-namespace Jsondyno.Internal.Dynamic;
+namespace Jsondyno.Dynamic;
 
-public sealed partial class ObjectAdapter : DynamicObject
+public sealed class ObjectAdapter : Adapter
 {
     private readonly IJsonObject _value;
 
@@ -15,6 +15,8 @@ public sealed partial class ObjectAdapter : DynamicObject
         _value = value;
         _policy = policy;
     }
+
+    private protected override IJsonValue JsonValue => _value;
 
     public object? this[string key] => GetPropertyByIndex(key);
 
@@ -29,13 +31,6 @@ public sealed partial class ObjectAdapter : DynamicObject
         _cache.Add(key, propertyValue);
 
         return propertyValue;
-    }
-
-    public override bool TryConvert(ConvertBinder binder, out object? result)
-    {
-        result = _value.Deserialize(binder.ReturnType);
-
-        return true;
     }
 
     public override bool TryGetMember(GetMemberBinder binder, out object? result)
@@ -66,6 +61,4 @@ public sealed partial class ObjectAdapter : DynamicObject
 
         return _cache.TryGetValue(propertyName, out propertyValue);
     }
-
-    public override string ToString() => _value.ToString()!;
 }

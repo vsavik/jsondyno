@@ -1,6 +1,8 @@
-namespace Jsondyno.Internal.Dynamic;
+using Jsondyno.Internal;
 
-public sealed partial class PrimitiveAdapter : DynamicObject
+namespace Jsondyno.Dynamic;
+
+public sealed class PrimitiveAdapter : Adapter
 {
     private readonly IJsonValue _value;
 
@@ -13,14 +15,9 @@ public sealed partial class PrimitiveAdapter : DynamicObject
         _value = value;
     }
 
-    public override bool TryConvert(ConvertBinder binder, out object? result)
-    {
-        result = GetValue(binder.ReturnType);
+    private protected override IJsonValue JsonValue => _value;
 
-        return true;
-    }
-
-    private object? GetValue(Type targetType)
+    protected override object? GetValue(Type targetType)
     {
         if (_deserializedValueType is not null &&
             _deserializedValueType == targetType)
@@ -33,13 +30,4 @@ public sealed partial class PrimitiveAdapter : DynamicObject
 
         return _deserializedValue;
     }
-
-    private T? GetValue<T>()
-    {
-        Type targetType = typeof(T);
-
-        return (T?)GetValue(targetType);
-    }
-
-    public override string ToString() => _value.ToString()!;
 }

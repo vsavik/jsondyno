@@ -1,6 +1,6 @@
-using Jsondyno.Internal.Dynamic;
+using Jsondyno.Dynamic;
 
-namespace Jsondyno.Internal.Serialization;
+namespace Jsondyno.Internal;
 
 internal sealed class JsonElementValue : IJsonArray, IJsonObject
 {
@@ -21,9 +21,6 @@ internal sealed class JsonElementValue : IJsonArray, IJsonObject
     }
 
     public JsonElement ToJsonElement() => _element;
-
-    public JsonNode ToJsonNode() =>
-        _element.Deserialize<JsonNode>(_options)!;
 
     public object? Deserialize(Type targetType) =>
         _element.Deserialize(targetType, _options);
@@ -59,25 +56,6 @@ internal sealed class JsonElementValue : IJsonArray, IJsonObject
             ? null
             : new(element, _options, _propertyDelegate);
 
-    public static IJsonValue? GetPropertyCaseSensitive(JsonElementValue element, string key) =>
-        element._element.TryGetProperty(key, out JsonElement propertyValue)
-            ? element.Convert(propertyValue)
-            : null;
-
-    public static IJsonValue? GetPropertyCaseInsensitive(JsonElementValue element, string key)
-    {
-        StringComparer comparer = StringComparer.OrdinalIgnoreCase;
-        foreach (JsonProperty property in element._element.EnumerateObject())
-        {
-            if (comparer.Equals(key, property.Name))
-            {
-                return element.Convert(property.Value);
-            }
-        }
-
-        return null;
-    }
-
     public override string ToString() => _element.ToIntendedJsonString();
 
     public static JsonElementValue Create(in JsonElement element, JsonSerializerOptions options) => new(
@@ -85,5 +63,24 @@ internal sealed class JsonElementValue : IJsonArray, IJsonObject
         options,
         options.PropertyNameCaseInsensitive ? GetPropertyCaseInsensitive : GetPropertyCaseSensitive);
 
-    private delegate IJsonValue? GetPropertyDelegate(JsonElementValue element, string key);
+    private static IJsonValue? GetPropertyCaseSensitive(JsonElementValue value, string key) =>
+        value._element.TryGetProperty(key, out JsonElement propertyValue)
+            ? value.Convert(propertyValue)
+            : null;
+
+    private static IJsonValue? GetPropertyCaseInsensitive(JsonElementValue value, string key)
+    {
+        StringComparer comparer = StringComparer.OrdinalIgnoreCase;
+        foreach (JsonProperty property in value._element.EnumerateObject())
+        {
+            if (comparer.Equals(key, property.Name))
+            {
+                return value.Convert(property.Value);
+            }
+        }
+
+        return null;
+    }
+
+    private delegate IJsonValue? GetPropertyDelegate(JsonElementValue value, string key);
 }

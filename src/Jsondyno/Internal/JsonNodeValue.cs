@@ -1,7 +1,6 @@
-using System.Diagnostics.CodeAnalysis;
-using Jsondyno.Internal.Dynamic;
+using Jsondyno.Dynamic;
 
-namespace Jsondyno.Internal.Serialization;
+namespace Jsondyno.Internal;
 
 internal abstract class JsonNodeValue<TNode> : IJsonValue
     where TNode : JsonNode
@@ -38,9 +37,6 @@ internal abstract class JsonNodeValue<TNode> : IJsonValue
                 return new Primitive(node, options);
         }
     }
-
-    public JsonElement ToJsonElement() =>
-        _node.Deserialize<JsonElement>(_options);
 
     public JsonNode ToJsonNode() => _node;
 
