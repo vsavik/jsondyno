@@ -18,25 +18,14 @@ internal abstract class JsonNodeValue<TNode> : IJsonValue
     }
 
     [return: NotNullIfNotNull(nameof(node))]
-    public static IJsonValue? Convert(JsonNode? node, JsonSerializerOptions options)
+    public static IJsonValue? Convert(JsonNode? node, JsonSerializerOptions options) => node switch
     {
-        if (node is null)
-        {
-            return null;
-        }
-
-        switch (node.GetValueKind())
-        {
-            case JsonValueKind.Array:
-                return new Array(node, options);
-
-            case JsonValueKind.Object:
-                return new Object(node, options);
-
-            default:
-                return new Primitive(node, options);
-        }
-    }
+        JsonValue jsonValue => new Primitive(jsonValue, options),
+        JsonArray jsonArray => new Array(jsonArray, options),
+        JsonObject jsonObject => new Object(jsonObject, options),
+        null => null,
+        _ => throw new InvalidOperationException(SR.UnknownNodeType(node))
+    };
 
     public JsonNode ToJsonNode() => _node;
 
@@ -49,8 +38,8 @@ internal abstract class JsonNodeValue<TNode> : IJsonValue
 
     private sealed class Primitive : JsonNodeValue<JsonValue>
     {
-        public Primitive(JsonNode node, JsonSerializerOptions options)
-            : base(node.AsValue(), options)
+        public Primitive(JsonValue node, JsonSerializerOptions options)
+            : base(node, options)
         {
         }
 
@@ -60,8 +49,8 @@ internal abstract class JsonNodeValue<TNode> : IJsonValue
 
     private sealed class Array : JsonNodeValue<JsonArray>, IJsonArray
     {
-        public Array(JsonNode node, JsonSerializerOptions options)
-            : base(node.AsArray(), options)
+        public Array(JsonArray node, JsonSerializerOptions options)
+            : base(node, options)
         {
         }
 
@@ -75,8 +64,8 @@ internal abstract class JsonNodeValue<TNode> : IJsonValue
 
     private sealed class Object : JsonNodeValue<JsonObject>, IJsonObject
     {
-        public Object(JsonNode node, JsonSerializerOptions options)
-            : base(node.AsObject(), options)
+        public Object(JsonObject node, JsonSerializerOptions options)
+            : base(node, options)
         {
         }
 
