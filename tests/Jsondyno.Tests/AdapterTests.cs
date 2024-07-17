@@ -1,6 +1,3 @@
-using System.Dynamic;
-using System.Text.Json.Nodes;
-
 namespace Jsondyno.Tests;
 
 [TestFixture(typeof(PrimitiveAdapter), TestOf = typeof(PrimitiveAdapter))]

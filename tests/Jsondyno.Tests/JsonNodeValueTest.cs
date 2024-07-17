@@ -1,10 +1,10 @@
 namespace Jsondyno.Tests;
 
-[TestFixture(TestOf = typeof(JsonElementValue))]
+[TestFixture(TestOf = typeof(JsonNodeValue<>))]
 [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
-public sealed class JsonElementValueTests
+public sealed class JsonNodeValueTest
 {
-    private readonly JsonElementValueFixture _fixture = new();
+    private readonly JsonNodeValueFixture _fixture = new();
 
     [TestCase("[]", 0)]
     [TestCase("[true]", 1)]
@@ -14,7 +14,7 @@ public sealed class JsonElementValueTests
         int expectedLength)
     {
         // Arrange
-        IJsonArray value = _fixture.WithJson(json).Create<JsonElementValue>();
+        IJsonArray value = _fixture.WithJson(json).Create<IJsonArray>();
 
         // Act
         int actualLength = value.GetLength();
@@ -34,13 +34,13 @@ public sealed class JsonElementValueTests
         string? elementJson)
     {
         // Arrange
-        IJsonArray value = _fixture.WithJson(json).Create<JsonElementValue>();
+        IJsonArray value = _fixture.WithJson(json).Create<IJsonArray>();
 
         // Act
-        JsonElement? actualElement = value.GetElement(index)?.ToJsonElement();
+        JsonNode? actualNode = value.GetElement(index)?.ToJsonNode();
 
         // Assert
-        actualElement.ShouldBeJsonString(elementJson);
+        actualNode.ShouldBeJsonString(elementJson);
     }
 
     [TestCase("""{ "name": "John", "age": 32}""", "name", "\"John\"")]
@@ -54,13 +54,13 @@ public sealed class JsonElementValueTests
         string? elementJson)
     {
         // Arrange
-        IJsonObject value = _fixture.WithJson(json).Create<JsonElementValue>();
+        IJsonObject value = _fixture.WithJson(json).Create<IJsonObject>();
 
         // Act
-        JsonElement? actualElement = value.GetProperty(propertyName)?.ToJsonElement();
+        JsonNode? actualNode = value.GetProperty(propertyName)?.ToJsonNode();
 
         // Assert
-        actualElement.ShouldBeJsonString(elementJson);
+        actualNode.ShouldBeJsonString(elementJson);
     }
 
     [TestCase("""{ "name": "John", "age": 32}""", "name", "\"John\"")]
@@ -74,13 +74,13 @@ public sealed class JsonElementValueTests
         string? elementJson)
     {
         // Arrange
-        IJsonObject value = _fixture.WithJson(json).CaseInsensitive().Create<JsonElementValue>();
+        IJsonObject value = _fixture.WithJson(json).CaseInsensitive().Create<IJsonObject>();
 
         // Act
-        JsonElement? actualElement = value.GetProperty(propertyName)?.ToJsonElement();
+        JsonNode? actualNode = value.GetProperty(propertyName)?.ToJsonNode();
 
         // Assert
-        actualElement.ShouldBeJsonString(elementJson);
+        actualNode.ShouldBeJsonString(elementJson);
     }
 
     [TestCase("true", TypeArgs = [typeof(PrimitiveAdapter)])]
@@ -95,40 +95,40 @@ public sealed class JsonElementValueTests
     public void ToDynamic_WhenStringIsValidNotNullJson_ShouldReturnAdapterOfType<T>(string json)
     {
         // Arrange
-        IJsonValue value = _fixture.WithJson(json).Create<JsonElementValue>();
+        IJsonValue value = _fixture.WithJson(json).Create<IJsonValue>();
 
         // Act
-        DynamicObject actualElement = value.ToDynamic();
+        DynamicObject actual = value.ToDynamic();
 
         // Assert
-        actualElement.ShouldBeOfType<T>();
+        actual.ShouldBeOfType<T>();
     }
 
-    private sealed class JsonElementValueFixture : Fixture
+    private sealed class JsonNodeValueFixture : Fixture
     {
-        public JsonElementValueFixture()
+        public JsonNodeValueFixture()
         {
             this.Inject(JsonSerializerOptions.Default);
-            this.Register<string, JsonSerializerOptions, JsonElement>(CreateJsonElement);
-            this.Register((JsonElement element, JsonSerializerOptions opts) =>
-                JsonElementValue.Create(element, opts));
+            this.Register<string, JsonSerializerOptions, JsonNode>(CreateJsonNode);
+            this.Register<JsonNode, JsonSerializerOptions, IJsonValue>(CreateJsonNode);
+            this.Register((IJsonValue jsonValue) => (IJsonArray)jsonValue);
+            this.Register((IJsonValue jsonValue) => (IJsonObject)jsonValue);
         }
 
-        private JsonElement CreateJsonElement(string json, JsonSerializerOptions opts)
-        {
-            using JsonDocument document = JsonDocument.Parse(json, opts.ToDocumentOpts());
+        private JsonNode CreateJsonNode(string json, JsonSerializerOptions opts) =>
+            JsonNode.Parse(json, opts.ToNodeOpts())!;
 
-            return document.RootElement.Clone();
-        }
+        private IJsonValue CreateJsonNode(JsonNode rootNode, JsonSerializerOptions opts) =>
+            JsonNodeValue<JsonNode>.Convert(rootNode, opts);
 
-        public JsonElementValueFixture WithJson(string json)
+        public JsonNodeValueFixture WithJson(string json)
         {
             this.Inject(json);
 
             return this;
         }
 
-        public JsonElementValueFixture CaseInsensitive()
+        public JsonNodeValueFixture CaseInsensitive()
         {
             this.Inject(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
