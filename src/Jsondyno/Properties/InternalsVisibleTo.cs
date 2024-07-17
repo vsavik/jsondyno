@@ -2,5 +2,5 @@ using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Jsondyno.Tests")]
 
-// Required for Moq https://github.com/devlooped/moq/wiki/Quickstart#advanced-features
+// Required for FakeItEasy https://fakeiteasy.github.io/docs/8.3.0/how-to-fake-internal-types
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]

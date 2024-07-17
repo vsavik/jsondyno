@@ -7,16 +7,16 @@
             "args": [],
         },
         {
-            "type": "dotnet",
+            "type": "dotnet-launch-settings",
+            "profileName": "Default",
             "name": "Run sample: minimal web API",
-            "projectPath": "samples/02-web-minimal-api-sample/Jsondyno.MinimalWebApi.csproj",
-            "args": [],
+            "projectPath": "samples/02-web-minimal-api-sample/Jsondyno.MinimalWebApi.csproj"
         },
         {
-            "type": "dotnet",
+            "type": "dotnet-launch-settings",
+            "profileName": "Default",
             "name": "Run sample: controler based API",
-            "projectPath": "samples/03-web-controller-based-api-sample/Jsondyno.ControllerBasedApi.csproj",
-            "args": [],
+            "projectPath": "samples/03-web-controller-based-api-sample/Jsondyno.ControllerBasedApi.csproj"
         }
     ]
 }

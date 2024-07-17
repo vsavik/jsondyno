@@ -61,7 +61,7 @@ public sealed class DynamicObjectJsonConverter : JsonConverter<dynamic>
         dynamic value,
         JsonSerializerOptions options)
     {
-        Type type = value.GetType();
+        Type type = ((object)value).GetType();
         if (type == typeof(object) ||
             type == typeof(ArrayAdapter) ||
             type == typeof(ObjectAdapter) ||
