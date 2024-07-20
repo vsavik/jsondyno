@@ -6,6 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <!-- Release build settings -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">    
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
   <!-- Nuget package data -->
   <ItemGroup>
     <None Include="../../README.md" Pack="true" PackagePath="\"/>
@@ -14,7 +21,6 @@
   <!-- Nuget package info -->
   <PropertyGroup>
     <PackageId>Jsondyno</PackageId>
-    <PackageVersion>$(PackageVersion)</PackageVersion>
     <Authors>Vlad Savik</Authors>
     <Description>Jsondyno is a versatile C# library that leverages the dynamic keyword, enabling intuitive and effortless access to JSON object properties.</Description>
     <Copyright>Copyright © Vlad Savik 2024.</Copyright>
@@ -28,6 +34,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="MinVer" Version="5.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>

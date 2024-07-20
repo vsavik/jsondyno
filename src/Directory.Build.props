@@ -5,4 +5,12 @@
     <MinVerMinimumMajorMinor>1.0</MinVerMinimumMajorMinor>
     <MinVerTagPrefix>v</MinVerTagPrefix>
   </PropertyGroup>
+
+  <!-- Deterministic CI build -->
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <EnablePackageValidation>true</EnablePackageValidation>
+  </PropertyGroup>
+
 </Project>

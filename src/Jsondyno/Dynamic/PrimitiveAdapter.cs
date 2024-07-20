@@ -2,6 +2,9 @@ using Jsondyno.Internal;
 
 namespace Jsondyno.Dynamic;
 
+/// <summary>
+///   Represents a caching dynamic adapter to wrap primitive types.
+/// </summary>
 public sealed class PrimitiveAdapter : Adapter
 {
     private object? _deserializedValue;
@@ -15,7 +18,7 @@ public sealed class PrimitiveAdapter : Adapter
 
     private protected override IJsonValue JsonValue { get; }
 
-    protected override object? GetValue(Type targetType)
+    private protected override object? GetValue(Type targetType)
     {
         if (_deserializedValueType is not null &&
             _deserializedValueType == targetType)

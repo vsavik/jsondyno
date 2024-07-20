@@ -9,6 +9,7 @@ namespace Jsondyno;
 /// </summary>
 public sealed class DynamicObjectJsonConverter : JsonConverter<dynamic>
 {
+    /// <inheritdoc />
     public override bool CanConvert(Type typeToConvert)
     {
         if (typeToConvert == typeof(object) ||
@@ -22,6 +23,7 @@ public sealed class DynamicObjectJsonConverter : JsonConverter<dynamic>
         return false;
     }
 
+    /// <inheritdoc />
     public override dynamic Read(
         ref Utf8JsonReader reader,
         Type typeToConvert,
@@ -56,6 +58,7 @@ public sealed class DynamicObjectJsonConverter : JsonConverter<dynamic>
         return JsonNodeValue<JsonNode>.Convert(rootNode, options).ToDynamic();
     }
 
+    /// <inheritdoc />
     public override void Write(
         Utf8JsonWriter writer,
         dynamic value,

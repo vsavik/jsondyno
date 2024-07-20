@@ -2,6 +2,9 @@ using Jsondyno.Internal;
 
 namespace Jsondyno.Dynamic;
 
+/// <summary>
+///   Represents a dynamic adapter to wrap JSON obejcts.
+/// </summary>
 public sealed class ObjectAdapter : Adapter
 {
     private readonly IJsonObject _value;
@@ -18,6 +21,11 @@ public sealed class ObjectAdapter : Adapter
 
     private protected override IJsonValue JsonValue => _value;
 
+    /// <summary>
+    ///   Gets the element with the specified property name.
+    ///   If the property is not found, <see langword="null"/> is returned.
+    /// </summary>
+    /// <param name="key">The name of the property to return.</param>
     public object? this[string key] => GetPropertyByIndex(key);
 
     private object? GetPropertyByIndex(string key)
@@ -33,6 +41,7 @@ public sealed class ObjectAdapter : Adapter
         return propertyValue;
     }
 
+    /// <inheritdoc />
     public override bool TryGetMember(GetMemberBinder binder, out object? result)
     {
         result = GetPropertyByMemberName(binder.Name);
