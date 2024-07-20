@@ -3,15 +3,9 @@
   "isRoot": true,
   "tools": {
     "jetbrains.resharper.globaltools": {
-      "version": "2023.3.3",
+      "version": "2024.1.4",
       "commands": [
         "jb"
-      ]
-    },
-    "gitversion.tool": {
-      "version": "5.12.0",
-      "commands": [
-        "dotnet-gitversion"
       ]
     }
   }

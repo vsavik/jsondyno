@@ -1,18 +1,35 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <LangVersion>12.0</LangVersion>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <PackageId>Jsondyno</PackageId>
+    <PackageVersion>$(PackageVersion)</PackageVersion>
+    <Authors>Vlad Savik</Authors>
+    <Description>Jsondyno is a versatile C# library that leverages the dynamic keyword, enabling intuitive and effortless access to JSON object properties.</Description>
+    <Copyright>Copyright © Vlad Savik 2024.</Copyright>
+    <PackageProjectUrl>https://github.com/vsavik/jsondyno</PackageProjectUrl>
+    <PackageIconUrl></PackageIconUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/vsavik/jsondyno</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>dynamic, json, serialization, deserialization, property</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="PolySharp" Version="1.14.1">
+    <PackageReference Include="MinVer" Version="5.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="System.Text.Json" Version="6.0.*"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../../README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
 </Project>

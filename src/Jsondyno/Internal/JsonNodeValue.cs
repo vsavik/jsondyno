@@ -9,7 +9,7 @@ internal abstract class JsonNodeValue<TNode> : IJsonValue
 
     private readonly TNode _node;
 
-    protected JsonNodeValue(
+    private JsonNodeValue(
         TNode node,
         JsonSerializerOptions options)
     {
