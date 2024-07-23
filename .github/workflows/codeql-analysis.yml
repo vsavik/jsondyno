@@ -1,0 +1,35 @@
+name: "CodeQL"
+on:
+  push:
+    branches: [main]
+    paths:
+    - 'src/**/*.cs'
+    - 'src/**/*.csproj'
+  pull_request:
+    branches: [main]
+    paths:
+    - 'src/**/*.cs'
+    - 'src/**/*.csproj'
+  workflow_dispatch:
+  schedule:
+    - cron: '5 4 * * 2'
+jobs:
+  analyze:
+    name: Analyze project
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      security-events: write
+      packages: read
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: CodeQL - Initialize
+      uses: github/codeql-action/init@v3
+      with:
+        languages: csharp
+        build-mode: autobuild
+    - name: CodeQL - Autobuild
+      uses: github/codeql-action/autobuild@v3
+    - name: CodeQL - Analyze
+      uses: github/codeql-action/analyze@v3

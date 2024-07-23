@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jsondyno", "src\Jsondyno\Js
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{65B73225-CF1C-4E1E-9971-18C749267DE6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jsondyno.ConsoleApp", "samples\01-basic-usage-console-sample\Jsondyno.ConsoleApp.csproj", "{A13B14D2-C2CC-4FE8-966C-49C479C363D9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jsondyno.ConsoleApp", "samples\01-console-basic-usage-sample\Jsondyno.ConsoleApp.csproj", "{A13B14D2-C2CC-4FE8-966C-49C479C363D9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jsondyno.MinimalWebApi", "samples\02-web-minimal-api-sample\Jsondyno.MinimalWebApi.csproj", "{B11E726C-1909-433F-B34A-CCBD91014852}"
 EndProject
