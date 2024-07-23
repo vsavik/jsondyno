@@ -1,0 +1,30 @@
+name: Create NuGet package
+on:
+  push:
+    tags:
+    - 'v.*'
+  workflow_dispatch:
+env:
+  DOTNET_NOLOGO: yes
+  DOTNET_CLI_TELEMETRY_OPTOUT: yes
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        filter: tree:0
+        fetch-depth: 0
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build solution
+      run: dotnet build --no-restore --configuration Release
+    - name: Run tests
+      run: dotnet test tests/Jsondyno.Tests/ --no-build --verbosity normal
+    - name: Create nupkg
+      run: dotnet pack src/Jsondyno/Jsondyno.csproj --output artifacts
+    - name: List dir
+      run: ls ./artifacts

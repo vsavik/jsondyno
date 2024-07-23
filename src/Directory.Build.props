@@ -3,7 +3,7 @@
   <PropertyGroup>
     <MinVerSkip Condition="'$(Configuration)' == 'Debug'">true</MinVerSkip>
     <MinVerMinimumMajorMinor>1.0</MinVerMinimumMajorMinor>
-    <MinVerTagPrefix>v</MinVerTagPrefix>
+    <MinVerTagPrefix>v.</MinVerTagPrefix>
   </PropertyGroup>
 
   <!-- Deterministic CI build -->
