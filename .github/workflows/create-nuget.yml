@@ -9,6 +9,7 @@ env:
   DOTNET_CLI_TELEMETRY_OPTOUT: yes
 jobs:
   build:
+    name: Build, Test and NuGet
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -26,5 +27,5 @@ jobs:
       run: dotnet test tests/Jsondyno.Tests/ --no-build --configuration Release --verbosity normal
     - name: Create nupkg
       run: dotnet pack src/Jsondyno/Jsondyno.csproj --output artifacts
-    - name: List dir
-      run: ls ./artifacts
+    - name: NuGet Push
+      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
