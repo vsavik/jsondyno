@@ -1,8 +1,5 @@
 name: Create NuGet package
 on:
-  push:
-    tags:
-    - 'v.*'
   workflow_dispatch:
 env:
   DOTNET_NOLOGO: yes
@@ -28,4 +25,4 @@ jobs:
     - name: Create nupkg
       run: dotnet pack src/Jsondyno/Jsondyno.csproj --output artifacts
     - name: NuGet Push
-      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json --skip-duplicate
