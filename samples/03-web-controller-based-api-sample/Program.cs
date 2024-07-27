@@ -6,9 +6,8 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 // Configure JsonSerializerOptions with Jsondyno converter
 builder.Services.AddControllers().AddJsonOptions(opts =>
 {
-    JsonSerializerOptions options = opts.JsonSerializerOptions;
-    options.Converters.Add(new DynamicObjectJsonConverter());
-    options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    opts.JsonSerializerOptions.Converters.Add(new DynamicObjectJsonConverter());
+    opts.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 });
 
 builder.Services.AddSwaggerGen();

@@ -9,13 +9,12 @@ In [Program.cs](./Program.cs) add `Jsondyno.DynamicObjectJsonConverter` to JsonS
 ```csharp
 builder.Services.AddControllers().AddJsonOptions(opts =>
 {
-    JsonSerializerOptions options = opts.JsonSerializerOptions;
-
     // Required
-    options.Converters.Add(new DynamicObjectJsonConverter());
+    opts.JsonSerializerOptions.Converters.Add(
+        new DynamicObjectJsonConverter());
 
     // Custom configs
-    options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    opts.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 });
 ```
 

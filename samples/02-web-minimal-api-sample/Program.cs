@@ -4,9 +4,8 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.ConfigureHttpJsonOptions(opts =>
 {
-    JsonSerializerOptions options = opts.SerializerOptions;
-    options.Converters.Add(new Jsondyno.DynamicObjectJsonConverter());
-    options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    opts.SerializerOptions.Converters.Add(new Jsondyno.DynamicObjectJsonConverter());
+    opts.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 });
 
 WebApplication app = builder.Build();

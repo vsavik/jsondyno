@@ -1,5 +1,3 @@
 # Artifacts
 
-List of produced files:
-
-- JetBrains code analysis: `code-analysis-jb-report.xml`
+Place to keep output of build, test, etc.
