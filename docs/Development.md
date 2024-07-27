@@ -1,5 +1,11 @@
 # Development Guide
 
+Sample
+
+https://github.com/bchavez/Bogus/blob/master/README.md#building-from-source
+
+
+
 describe build.ps1, run tools (jb)
 common build tasks (nuke build, compile, etc)
 exec nuke as global tool or with ps profile
