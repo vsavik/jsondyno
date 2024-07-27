@@ -37,7 +37,7 @@ More usage topic can be found [here](./docs/Usage.md).
 
 - [How to use *Jsondyno*](./docs/Usage.md)
 - [Advanced - *Jsondyno* internals](./docs/Advanced.md)
-- [Benchmars](./docs/Benchmarks.md)
+- [Benchmarks](./docs/Benchmarks.md)
 - [Development Guides](./docs/Development.md)
 
 ## Contributing
